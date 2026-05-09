@@ -1288,6 +1288,7 @@ const I18N_TEXT = {
   "商户授权":"Merchant consent",
   "还款 / 复贷 / 提额":"Repayment / repeat / uplift"
 };
+const I18N_PREF_VERSION = 'en-default-v1';
 
 function normalizeI18nText(text){
   return text.replace(/\s+/g,' ').trim();
@@ -1343,7 +1344,11 @@ function bootI18n(){
       toggleLang();
     }
   });
-  applyLang(localStorage.getItem('kilimaxPptLang')==='en'?'en':'zh');
+  if(localStorage.getItem('kilimaxPptLangVersion') !== I18N_PREF_VERSION){
+    localStorage.setItem('kilimaxPptLangVersion', I18N_PREF_VERSION);
+    localStorage.setItem('kilimaxPptLang', 'en');
+  }
+  applyLang(localStorage.getItem('kilimaxPptLang')==='zh'?'zh':'en');
   window.__setDeckLang=applyLang;
 }
 bootI18n();
