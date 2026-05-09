@@ -28,7 +28,7 @@
     --sans-zh:"Noto Sans SC",source-han-sans-sc,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);color:var(--paper);font-family:var(--sans-zh);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);color:var(--paper);font-family:var(--sans-zh);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overscroll-behavior:none}
 
   /* ============ WebGL 双背景 ============ */
   canvas.bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;transition:opacity 1.2s ease}
@@ -39,7 +39,7 @@
 
   /* ============ Deck 容器 + 翻页 ============ */
   /* width: NSLIDES * 100vw，会在 JS 里动态矫正 */
-  #deck{position:fixed;inset:0;width:10000vw;height:100vh;display:flex;flex-wrap:nowrap;transition:transform .9s cubic-bezier(.77,0,.175,1);z-index:10;will-change:transform}
+  #deck{position:fixed;inset:0;width:10000vw;height:100vh;display:flex;flex-wrap:nowrap;transition:transform .9s cubic-bezier(.77,0,.175,1);z-index:10;will-change:transform;touch-action:none}
   .slide{width:100vw;height:100vh;flex:0 0 100vw;position:relative;padding:6vh 6vw 10vh 6vw;display:flex;flex-direction:column;overflow:hidden}
   .slide.light{color:var(--ink);background:var(--paper)}
   .slide.dark{color:var(--paper);background:var(--ink)}
@@ -228,6 +228,86 @@
   body.light-bg #nav .dot{background:rgba(var(--ink-rgb),.25)}
   body.light-bg #nav .dot.active{background:rgba(var(--ink-rgb),.9)}
   #hint{position:fixed;bottom:3vh;right:3vw;z-index:30;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.4;mix-blend-mode:difference;color:#aaa}
+  #lang-toggle{position:fixed;right:3vw;bottom:5.5vh;z-index:31;border:0;background:transparent;color:#aaa;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.32;cursor:pointer;padding:6px 0;mix-blend-mode:difference;transition:opacity .2s ease,transform .2s ease}
+  #lang-toggle:hover,#lang-toggle:focus-visible{opacity:.74;outline:none;transform:translateY(-1px)}
+  .nav-edge{position:fixed;top:0;bottom:0;width:18vw;z-index:20;border:0;background:transparent;opacity:0;cursor:pointer}
+  .nav-edge.prev{left:0}
+  .nav-edge.next{right:0}
+  .nav-edge:focus-visible{outline:1px solid rgba(255,255,255,.28);outline-offset:-10px}
+  body.lang-en{font-family:var(--serif-body-en)}
+  body.lang-en .h-hero,
+  body.lang-en .h-xl,
+  body.lang-en .h-sub,
+  body.lang-en .h-md,
+  body.lang-en .h1-zh,
+  body.lang-en .h2-zh,
+  body.lang-en .h3-zh,
+  body.lang-en .display-zh,
+  body.lang-en .lead,
+  body.lang-en .callout,
+  body.lang-en .callout .q-big,
+  body.lang-en .quad .t,
+  body.lang-en .map-item .k,
+  body.lang-en .flow-step .t,
+  body.lang-en .rowline .k,
+  body.lang-en .pillar .t,
+  body.lang-en .stat-card .stat-nb,
+  body.lang-en .foot .title{font-family:var(--serif-en);letter-spacing:0}
+  body.lang-en .body-zh,
+  body.lang-en .stat .l,
+  body.lang-en .stat-note,
+  body.lang-en .quad .d,
+  body.lang-en .map-item .v,
+  body.lang-en .flow-step .d,
+  body.lang-en .rowline .v,
+  body.lang-en .pillar .d,
+  body.lang-en .mini-list,
+  body.lang-en .dense-row .v,
+  body.lang-en .signal-row .v{font-family:var(--serif-body-en);letter-spacing:0}
+  body.lang-en .h-hero{font-size:8.4vw;line-height:.95}
+  body.lang-en .h-xl{font-size:4.15vw!important;line-height:1.08}
+  body.lang-en .h-sub{font-size:2.55vw;line-height:1.18}
+  body.lang-en .lead{font-size:1.55vw;line-height:1.42}
+  body.lang-en .quad .t,
+  body.lang-en .map-item .k,
+  body.lang-en .flow-step .t,
+  body.lang-en .rowline .k,
+  body.lang-en .stat-card .stat-nb,
+  body.lang-en .pillar .t{line-height:1.12;overflow-wrap:anywhere}
+  body.lang-en .quad .d,
+  body.lang-en .map-item .v,
+  body.lang-en .flow-step .d,
+  body.lang-en .rowline .v,
+  body.lang-en .stat-note,
+  body.lang-en .pillar .d{line-height:1.34}
+  body.lang-en .stat-note{font-size:max(10px,.78vw)}
+  body.lang-en .foot{letter-spacing:.12em}
+  body.lang-en .meta-row{letter-spacing:.12em}
+  body.lang-en .stat-card .stat-nb[style],
+  body.lang-en .flow-step .t{font-size:clamp(13px,1.18vw,24px)!important}
+  body.lang-en .grid-3 .stat-card .stat-nb{font-size:3.2vw!important}
+  body.lang-en .kicker{font-size:max(10px,.72vw);letter-spacing:.18em}
+  body.lang-en .chrome,body.lang-en .foot{font-size:max(10px,.68vw)}
+  body.lang-en .map-grid{gap:.9vw 1vw}
+  body.lang-en .map-item{grid-template-columns:1fr 1.55fr;gap:.8vw;padding:1vh 0}
+  body.lang-en .flow-bands{gap:1.4vw;margin-top:2.8vh}
+  body.lang-en .flow-band{padding:1.55vh 1.15vw}
+  body.lang-en .flow-steps{gap:.9vh .8vw}
+  body.lang-en .flow-step{padding-top:.75vh}
+  body.lang-en .mini-list{font-size:max(11px,.82vw);line-height:1.28}
+  body.lang-en .callout{font-size:max(13px,1vw);line-height:1.38}
+  body.lang-en .signal-row{padding:1.05vh 0}
+  body.lang-en .signal-row .k{font-size:1.05vw;line-height:1.15;overflow-wrap:anywhere}
+  body.lang-en .signal-row .v{font-size:max(11px,.8vw);line-height:1.28}
+  body.lang-en .rowline{padding:1.55vh 0;gap:1.2vw}
+  body.lang-en .rowline .k{font-size:1.18vw}
+  body.lang-en .rowline .v{font-size:max(11px,.86vw)}
+  body.lang-en .quad{padding:1.45vh 1.15vw;min-height:14vh}
+  body.lang-en .quad .t{font-size:1.48vw}
+  body.lang-en .quad .d{font-size:max(11px,.82vw)}
+  body.lang-en .pillar{gap:1.25vh}
+  body.lang-en .pillar .t{font-size:1.7vw}
+  body.lang-en .pillar .d{font-size:max(11px,.86vw);line-height:1.35}
 
   /* ============================================================
      ============ LAYOUTS API · 面向 agent 的类（v2）============
@@ -474,7 +554,8 @@
 
 <canvas id="bg-dark" class="bg"></canvas>
 <canvas id="bg-light" class="bg"></canvas>
-<div id="hint">← → 翻页 · ESC 索引</div>
+<div id="hint">← → / 点击边缘翻页 · ESC 索引 · L 双语</div>
+<button id="lang-toggle" type="button" aria-label="Switch language">CN / EN</button>
 
 <div id="deck">
 
@@ -929,9 +1010,344 @@
 
 </div>
 
+<button class="nav-edge prev" type="button" aria-label="Previous page"></button>
+<button class="nav-edge next" type="button" aria-label="Next page"></button>
 <div id="nav"></div>
 
 <script>
+/* =============== Bilingual mode（隐蔽 CN / EN 切换） =============== */
+const I18N_TEXT = {
+  "KiliMax + Fintech 非洲 SME 融资合作方案":"KiliMax + Fintech Africa SME Financing Partnership",
+  "← → / 点击边缘翻页 · ESC 索引 · L 双语":"← → / edge click · ESC index · L language",
+  "SME 融资":"SME Financing",
+  "KiliMax + Fintech 非洲合作方案":"KiliMax + Fintech Africa Partnership",
+  "KiliMax 数字化非洲 SME 的真实经营活动；Fintech / 银行将经营数据转化为经营周转资金，共同探索可规模化的 SME 融资合作模式。":"KiliMax digitizes real African SME operations; Fintech / Bank partners turn operating data into working capital, together exploring a scalable SME financing model.",
+  "基于 KiliMax 经营数据的非洲 SME 经营周转融资合作探索":"An Africa SME working-capital partnership built on KiliMax operating data",
+  "这是一个“经营系统 + 金融能力”的合作机会":"An opportunity to combine an operating system with financial capability",
+  "银行要服务 SME，先要看见 SME":"To serve SMEs, banks first need to see them",
+  "KiliMax 已经在非洲 SME 的真实经营场景中覆盖零售、批发、门店经营、库存、销售、采购和支付等日常流程。":"KiliMax already covers daily African SME workflows across retail, wholesale, store operations, inventory, sales, purchasing, and payments.",
+  "获客成本高":"High acquisition cost",
+  "难以低成本识别真实活跃、适合服务的 SME。":"Hard to identify genuinely active and serviceable SMEs at low cost.",
+  "经营数据不足":"Limited operating data",
+  "缺少销售、库存、采购、门店活跃等连续信号。":"Missing continuous signals across sales, inventory, purchasing, and store activity.",
+  "贷后监控弱":"Weak post-loan monitoring",
+  "放款后难以及时观察经营改善、恶化或异常。":"Difficult to observe operational improvement, deterioration, or anomalies after disbursement.",
+  "小额服务成本高":"High cost to serve small tickets",
+  "人工审批、催收和复贷判断难以规模化。":"Manual approval, collection, and repeat-loan decisions are hard to scale.",
+  "KiliMax 提供":"KiliMax provides",
+  "商户入口、经营系统、ERP/POS 使用、经营数据、融资产品触点。":"Merchant access, operating system, ERP/POS usage, operating data, and financing touchpoints.",
+  "银行提供":"Bank provides",
+  "资金来源、授信政策、额度定价、合同签署、放款、还款、合规。":"Funding, credit policy, limit pricing, contracts, disbursement, repayment, and compliance.",
+  "共同验证":"Joint validation",
+  "商户使用、数据价值、融资转化、还款闭环、复贷提额潜力。":"Merchant usage, data value, financing conversion, repayment loop, and repeat-loan uplift potential.",
+  "KiliMax 不是贷款方，而是银行服务 SME 的经营软件层、数据层和金融产品触点。":"KiliMax is not the lender; it is the operating software layer, data layer, and product touchpoint for banks serving SMEs.",
+  "KiliMax 是银行服务 SME 的经营软件层、数据层和产品触点":"KiliMax is the operating software layer, data layer, and product touchpoint for banks serving SMEs",
+  "KiliMax 是什么":"What KiliMax is",
+  "非洲 SME 的日常经营系统":"The daily operating system for African SMEs",
+  "面向零售商户、批发商、分销商、门店型商户、小型连锁门店，未来可扩展到美业、餐饮和本地服务。":"Built for retailers, wholesalers, distributors, store-based merchants, and small chains, with future expansion into beauty, F&B, and local services.",
+  "核心模块：ERP、POS、库存管理、销售管理、采购管理、商品 / SKU 管理。":"Core modules: ERP, POS, inventory, sales, purchasing, and product / SKU management.",
+  "经营对象：客户、员工、门店、订单、收款、供应商与日常操作记录。":"Operating objects: customers, staff, stores, orders, receipts, suppliers, and daily activity logs.",
+  "金融延展：支付和收款相关能力、经营数据授权、AI-powered operating insights。":"Financial extension: payment and collection capabilities, operating-data consent, and AI-powered operating insights.",
+  "合作定位：日常经营系统、数据入口、银行金融产品触点。":"Partnership role: daily operating system, data entry point, and bank product touchpoint.",
+  "KiliMax 不只是管理软件，而是 SME 商户的日常经营系统和数据入口。":"KiliMax is more than management software; it is the daily operating system and data entry point for SME merchants.",
+  "开单与收款":"Sales and collection",
+  "POS、销售、门店流水和支付相关能力。":"POS, sales, store revenue, and payment-related capabilities.",
+  "库存与 SKU":"Inventory and SKUs",
+  "商品、库存、盘点、动销和补货信号。":"Products, inventory, stocktaking, sell-through, and replenishment signals.",
+  "门店管理":"Store management",
+  "多门店经营表现、员工操作和门店活跃。":"Multi-store performance, staff actions, and store activity.",
+  "把经营数据转成画像、增长信号和异常提示。":"Turn operating data into profiles, growth signals, and anomaly alerts.",
+  "日常系统先跑起来，金融机会才有可信土壤":"A daily operating system creates the trusted ground for finance",
+  "真实客户案例验证":"Validated by real customer cases",
+  "已沉淀可融资经营信号":"Financing-relevant operating signals are already forming",
+  "Mobile / electronics retail and distribution，高 SKU、高频销售、多门店或扩张型经营。KiliMax 支持 ERP + POS，沉淀销售、库存、采购和门店活跃数据。":"Mobile / electronics retail and distribution with high SKUs, frequent sales, and multi-store or expansion-oriented operations. KiliMax supports ERP + POS and captures sales, inventory, purchasing, and store activity data.",
+  "40+ stores，多门店零售、全国性门店运营。KiliMax 统一门店系统，提升库存准确性、员工控制和经营可见性。":"40+ stores with multi-store retail and nationwide operations. KiliMax unifies store systems, improving inventory accuracy, staff control, and operating visibility.",
+  "Consumer electronics distribution，库存和供应链敏感。信号包括采购频率、供应商链路、库存流动和补货需求。":"Consumer electronics distribution, sensitive to inventory and supply chain dynamics. Signals include purchasing frequency, supplier links, inventory movement, and replenishment demand.",
+  "先解决经营数字化，再衍生融资机会":"Digitize operations first; financing opportunities follow",
+  "经营可见":"Visible Operations",
+  "只有经营过程被数字化，商户才有机会被金融机构识别、评估和持续服务。":"Only when operations are digitized can merchants be identified, assessed, and continuously served by financial institutions.",
+  "商户在 KiliMax 里完成的经营动作":"Merchant actions completed in KiliMax",
+  "交易动作":"Transaction actions",
+  "开单销售、门店收款、客户交易、支付 / 收款记录。":"Sales orders, store collections, customer transactions, and payment / receipt records.",
+  "商品动作":"Product actions",
+  "商品和 SKU 管理、库存查看、盘点、补货、采购。":"Product and SKU management, inventory checks, stocktaking, replenishment, and purchasing.",
+  "门店动作":"Store actions",
+  "门店表现查看、员工操作记录、多门店经营管理。":"Store performance review, staff activity logs, and multi-store operations.",
+  "系统持续沉淀为":"The system continuously turns these into",
+  "流水类数据":"Revenue data",
+  "销售记录、收款记录、客户交易记录、支付与回款节奏。":"Sales records, collection records, customer transactions, and payment / cash-in rhythm.",
+  "周转类数据":"Turnover data",
+  "库存记录、采购记录、商品周转记录、补货需求信号。":"Inventory records, purchase records, product turnover, and replenishment signals.",
+  "活跃类数据":"Activity data",
+  "门店活跃、员工操作、经营连续性和日常业务痕迹。":"Store activity, staff operations, business continuity, and daily operating traces.",
+  "很多 SME 不是没有生意":"Many SMEs do have business",
+  "是资金跟不上机会":"Their capital cannot keep up with opportunity",
+  "商品卖得动，但现金不够补货；批发商有订单，但短期资金不足；旺季前需要备货；库存周转快，但现金回笼慢。":"Products sell, but cash is short for replenishment; wholesalers have orders but lack short-term capital; merchants need stock before peak seasons; inventory turns quickly while cash returns slowly.",
+  "小商户缺少正式财报，难以获得传统贷款。":"Small merchants lack formal financial statements and struggle to access traditional loans.",
+  "传统贷款周期太长，不能匹配真实经营节奏。":"Traditional loan cycles are too slow for real operating rhythms.",
+  "非正规融资成本高、不透明，无法形成可持续信用记录。":"Informal financing is costly, opaque, and does not build sustainable credit history.",
+  "小额":"Small ticket",
+  "匹配单次补货和短周期采购。":"Fits one replenishment cycle or short procurement cycle.",
+  "快速":"Fast",
+  "跟得上销售节奏和旺季窗口。":"Keeps pace with sales rhythms and seasonal windows.",
+  "低摩擦":"Low friction",
+  "少资料、少人工、嵌入现有系统。":"Less paperwork, less manual work, embedded in the existing system.",
+  "可重复":"Repeatable",
+  "良好表现后复贷或提额。":"Good performance can lead to repeat loans or higher limits.",
+  "按流水":"Revenue-linked",
+  "额度与还款节奏贴近经营。":"Limits and repayment rhythms match operations.",
+  "用于周转":"For working capital",
+  "补货、采购、门店运营资金。":"Replenishment, purchasing, and store operating funds.",
+  "SME 需要的不是复杂贷款流程，而是贴近经营场景的周转资金":"SMEs need working capital close to operations, not complex loan processes",
+  "银行不是缺资金，而是缺可规模化服务 SME 的数据和触点":"Banks do not lack capital; they lack scalable SME data and touchpoints",
+  "识别、评估、监控、回收都太贵":"Identification, assessment, monitoring, and recovery are too expensive",
+  "识别":"Identify",
+  "哪些商户真实活跃？日常销售规模多大？是否有持续经营痕迹？":"Which merchants are truly active? How large are daily sales? Is there evidence of ongoing operations?",
+  "评估":"Assess",
+  "销售是否稳定？库存是否健康？是否存在真实补货需求？适合贷多少？":"Are sales stable? Is inventory healthy? Is there real replenishment demand? What limit fits?",
+  "监控":"Monitor",
+  "放款后经营是否改善？是否出现异常退款、库存不匹配或长期不活跃？":"Do operations improve after disbursement? Are there abnormal refunds, inventory mismatches, or long inactivity?",
+  "回收":"Recover",
+  "还款通道和状态如何同步？哪些商户适合复贷、提额、降额或催收？":"How are repayment channels and status synchronized? Which merchants suit repeat loans, limit increases, decreases, or collections?",
+  "核心难点不是单笔资金，而是小额、高频、分散商户的服务成本。":"The core challenge is not a single loan; it is the service cost of small, frequent, and distributed merchants.",
+  "银行服务 SME 的难点，是识别、评估、监控和回收的成本太高":"The SME banking challenge is the high cost of identifying, assessing, monitoring, and recovering",
+  "嵌入式合作能力":"Embedded partnership capability",
+  "嵌入银行商户生态":"Embedded in the bank merchant ecosystem",
+  "商户从 Bank / Fintech 的生态入口进入 KiliMax，经 SSO 低摩擦访问，订阅并使用 ERP / POS，在真实经营过程中沉淀数据。":"Merchants enter KiliMax from the Bank / Fintech ecosystem, access it through low-friction SSO, subscribe to ERP / POS, and generate data through real operations.",
+  "现有模式覆盖：Partner 平台进入、SSO 访问、订阅使用 KiliMax 服务。":"Current model: partner platform entry, SSO access, and subscription-based KiliMax usage.",
+  "后续可通过 API 或数据交换支持融资资格判断、贷后状态同步和复贷提额。":"Later, APIs or data exchange can support eligibility checks, post-loan status sync, and repeat-loan limit increases.",
+  "入口":"Entry",
+  "Partner 平台入口、SSO 单点登录、Embedded / IFRAME access。":"Partner platform entry, SSO login, and embedded / IFRAME access.",
+  "使用":"Usage",
+  "沉淀":"Data capture",
+  "商户经营数据、支付集成、后续 API 或数据交换。":"Merchant operating data, payment integration, and later API or data exchange.",
+  "授权":"Consent",
+  "商户数据授权、明确共享范围、Partner-side underwriting。":"Merchant data consent, defined sharing scope, and partner-side underwriting.",
+  "KiliMax 可以成为金融机构商户生态中的 SME 经营软件层和数据入口":"KiliMax can become the SME operating software layer and data entry point within financial institutions' merchant ecosystems",
+  "目标集成蓝图":"Target integration blueprint",
+  "从银行商户入口，到融资场景":"From bank merchant entry to financing scenario",
+  "商户入口":"Merchant entry",
+  "银行已有 SME 商户关系、账户、支付通道和服务入口。":"The bank already has SME relationships, accounts, payment channels, and service entry points.",
+  "输出: 可触达商户池":"Output: reachable merchant pool",
+  "低摩擦接入":"Low-friction access",
+  "Partner 入口、SSO、订阅访问，让商户从银行生态进入 KiliMax。":"Partner entry, SSO, and subscription access bring merchants from the bank ecosystem into KiliMax.",
+  "输出: 可使用经营系统":"Output: usable operating system",
+  "经营数字化":"Digitized operations",
+  "ERP / POS / Inventory / Sales 覆盖销售、库存、采购和门店动作。":"ERP / POS / Inventory / Sales cover sales, inventory, purchasing, and store actions.",
+  "输出: 系统生成数据":"Output: system-generated data",
+  "经营信号":"Operating signals",
+  "销售、库存、收款、采购和门店活跃在商户授权后转化为融资资格辅助信号。":"Sales, inventory, collections, purchasing, and store activity become financing eligibility signals after merchant consent.",
+  "输出: Eligibility signals":"Output: eligibility signals",
+  "资金闭环":"Capital loop",
+  "银行 / Fintech 完成授信、offer、放款、还款扣收和贷后监控。":"Bank / Fintech handles credit approval, offer, disbursement, repayment deduction, and post-loan monitoring.",
+  "输出: Working capital":"Output: working capital",
+  "关系建立":"Relationship",
+  "系统使用":"System usage",
+  "数据沉淀":"Data capture",
+  "资格判断":"Eligibility",
+  "放款与监控":"Disburse & monitor",
+  "嵌入式接入建立商户关系，经营数据创造融资机会":"Embedded access builds merchant relationships; operating data creates financing opportunities",
+  "KiliMax 作为 SME 融资数据层":"KiliMax as the SME financing data layer",
+  "把日常经营活动转化为可融资数据":"Turn daily operations into financeable data",
+  "销售数据":"Sales data",
+  "收入规模、稳定性、品类动销、增长趋势。":"Revenue scale, stability, category sell-through, and growth trends.",
+  "POS / 收款":"POS / collections",
+  "现金流、交易频率、支付与回款节奏。":"Cash flow, transaction frequency, and payment / cash-in rhythm.",
+  "库存数据":"Inventory data",
+  "周转、缺货、滞销、库存健康度。":"Turnover, stockouts, slow-moving goods, and inventory health.",
+  "采购数据":"Purchasing data",
+  "进货频率、供应商稳定性、经营连续性。":"Purchase frequency, supplier stability, and operating continuity.",
+  "门店活跃":"Store activity",
+  "真实经营、员工操作、多门店表现。":"Real operations, staff actions, and multi-store performance.",
+  "未来表现":"Future performance",
+  "融资使用、还款表现、复贷 / 提额记录。":"Financing usage, repayment performance, and repeat-loan / limit-increase records.",
+  "AI 的作用不是替代银行风控。":"AI does not replace bank risk management.",
+  "商户经营画像：行业、门店、SKU、销售和客户结构。":"Merchant operating profile: industry, stores, SKUs, sales, and customer structure.",
+  "增长信号：销售上升、门店扩张、采购频率提高。":"Growth signals: rising sales, store expansion, and higher purchase frequency.",
+  "补货需求：库存周转快、缺货风险、旺季备货。":"Replenishment demand: fast inventory turnover, stockout risk, and peak-season stocking.",
+  "异常经营：退款率高、库存不匹配、长期不活跃、异常支付模式。":"Operating anomalies: high refund rate, inventory mismatch, long inactivity, or abnormal payment patterns.",
+  "分层运营：适合触达、适合融资、适合复贷或需要预警。":"Segmented operations: suitable for outreach, financing, repeat loans, or early warning.",
+  "KiliMax 提供的不是单一数据点，而是商户持续经营画像":"KiliMax provides not a single data point, but a continuous merchant operating profile",
+  "数据可信度保障机制":"Data reliability mechanism",
+  "不是临时填表，而是经营过程留下的证据链":"Not temporary forms, but an evidence chain left by operations",
+  "系统生成":"System generated",
+  "对象可追溯":"Traceable objects",
+  "交叉验证":"Cross validation",
+  "操作可审计":"Auditable actions",
+  "异常可识别":"Detectable anomalies",
+  "授权后共享":"Shared after consent",
+  "KiliMax 不声称每一条数据天然无风险，而是提供更可追溯、更可验证的经营数据基础。":"KiliMax does not claim every data point is risk-free; it provides a more traceable and verifiable operating data foundation.",
+  "减少临时填报资料的不确定性。":"Reduces uncertainty from temporary self-reported materials.",
+  "让贷前判断和贷后监控使用同一套经营信号。":"Lets pre-loan decisions and post-loan monitoring use the same operating signals.",
+  "让数据共享建立在商户授权和明确范围之上。":"Keeps data sharing based on merchant consent and defined scope.",
+  "更可信的数据基础，帮助金融机构更高效判断 SME 融资机会":"A more trusted data foundation helps financial institutions assess SME financing opportunities more efficiently",
+  "从“静态资料审核”变成“经营信号判断”":"From static document review to operating-signal judgment",
+  "经营数据如何支持授信判断":"How operating data supports credit decisions",
+  "收入规模、销售稳定性、增长趋势。":"Revenue scale, sales stability, and growth trends.",
+  "额度上限":"Limit ceiling",
+  "POS / 收款数据":"POS / collection data",
+  "现金流、交易频率、回款节奏。":"Cash flow, transaction frequency, and cash-in rhythm.",
+  "还款能力":"Repayment capacity",
+  "周转、缺货、滞销、补货窗口。":"Turnover, stockouts, slow-moving goods, and replenishment windows.",
+  "真实需求":"Real demand",
+  "经营稳定":"Operating stability",
+  "门店活跃 / 支付数据":"Store activity / payment data",
+  "是否真实经营、回款节奏、支付偏好、现金流质量。":"Real operations, cash-in rhythm, payment preference, and cash-flow quality.",
+  "活跃度 / 质量":"Activity / quality",
+  "还款表现":"Repayment performance",
+  "履约能力、复贷表现、额度调节依据。":"Fulfillment ability, repeat-loan performance, and basis for limit adjustment.",
+  "复贷 / 提额":"Repeat / uplift",
+  "真实经营?":"Real operations?",
+  "持续活跃?":"Continuously active?",
+  "销售稳定?":"Stable sales?",
+  "库存健康?":"Healthy inventory?",
+  "补货需求?":"Replenishment need?",
+  "贷后改善?":"Post-loan improvement?",
+  "KiliMax 不替代银行风控，但提供更真实、连续、动态的经营信号":"KiliMax does not replace bank risk control; it provides more real, continuous, and dynamic operating signals",
+  "KiliMax 提供经营可见性":"KiliMax provides operating visibility",
+  "场景和数据层":"Scenario and data layer",
+  "系统":"System",
+  "ERP / POS / 库存 / 销售 / 门店经营。":"ERP / POS / inventory / sales / store operations.",
+  "触点":"Touchpoints",
+  "融资产品入口、Offer 展示、还款状态展示。":"Financing entry, offer display, and repayment status display.",
+  "同步":"Sync",
+  "商户经营数据、授权流程、贷后经营变化、还款状态展示。":"Merchant operating data, consent flow, post-loan operating changes, and repayment status display.",
+  "金融机构完成金融决策":"Financial institutions make the financial decisions",
+  "资金和风险层":"Capital and risk layer",
+  "资金":"Capital",
+  "资金来源、额度审批、费用和定价。":"Funding source, limit approval, fees, and pricing.",
+  "风控":"Risk control",
+  "授信政策、风控判断、合同签署。":"Credit policy, risk judgment, and contract signing.",
+  "执行":"Execution",
+  "放款、还款扣收、逾期处理、合规、催收、信用损失承担。":"Disbursement, repayment deduction, overdue handling, compliance, collection, and credit-loss bearing.",
+  "KiliMax 是经营场景和数据层，不是资金方":"KiliMax is the operating scenario and data layer, not the funding party",
+  "第一阶段产品":"Phase-one product",
+  "基于 KiliMax 经营数据的小微商户经营周转资金，优先服务补货、采购、旺季备货、短期现金流和高周转商品采购。":"Working capital for micro and small merchants based on KiliMax operating data, prioritizing replenishment, purchasing, peak-season stocking, short-term cash flow, and high-turnover goods.",
+  "场景":"Scenario",
+  "门店补货、批发商进货、POS 商户现金流周转、小商户经营扩张。":"Store replenishment, wholesaler purchasing, POS merchant cash-flow turnover, and small merchant expansion.",
+  "产品原则":"Product principles",
+  "小额、快速、简单、低摩擦、可重复，与经营流水匹配。":"Small-ticket, fast, simple, low-friction, repeatable, and aligned with operating revenue.",
+  "暂不主打":"Not phase-one focus",
+  "重型供应链金融、库存质押、供应商直付、PO financing、传统保理。":"Heavy supply-chain finance, inventory pledge, supplier direct payment, PO financing, and traditional factoring.",
+  "原因":"Reason",
+  "第一阶段应先验证使用、数据、转化和还款闭环，再进入重流程产品。":"Phase one should first validate usage, data, conversion, and repayment loop before entering heavier process products.",
+  "第一阶段产品应快速、简单、贴近商户日常经营需求":"Phase-one products should be fast, simple, and close to merchants' daily operating needs",
+  "从经营数据到 financing offer，再到自动还款":"From operating data to financing offer, then automated repayment",
+  "产品流程分成两段闭环":"The product flow has two loops",
+  "持续使用":"Continuous usage",
+  "商户在 KiliMax 中完成日常经营。":"Merchants complete daily operations in KiliMax.",
+  "销售、库存、采购、收款、门店活跃。":"Sales, inventory, purchasing, collections, and store activity.",
+  "授权共享":"Consent sharing",
+  "明确数据范围、用途和合作规则。":"Define data scope, purpose, and cooperation rules.",
+  "银行判断 eligibility、额度和费用。":"Bank judges eligibility, limit, and fees.",
+  "Offer 展示":"Offer display",
+  "商户查看额度、费用、期限和还款方式。":"Merchant reviews limit, fees, tenor, and repayment method.",
+  "放款使用":"Disbursement use",
+  "用于补货、采购或经营周转。":"Used for replenishment, purchasing, or working capital.",
+  "还款同步":"Repayment sync",
+  "销售流水、账户扣款或约定通道还款。":"Sales revenue, account deduction, or agreed repayment channel.",
+  "复贷提额":"Repeat and uplift",
+  "良好表现带来复贷或提额。":"Good performance leads to repeat loans or higher limits.",
+  "融资不脱离经营场景：KiliMax 负责经营数据、授权和产品触点；银行 / Fintech 负责授信、放款、还款扣收、合规与信用风险。":"Financing stays inside the operating scenario: KiliMax handles operating data, consent, and product touchpoints; Bank / Fintech handles credit approval, disbursement, repayment deduction, compliance, and credit risk.",
+  "看清还款来源、控制点和证据链":"Make repayment sources, control points, and evidence chain visible",
+  "还款来源":"Repayment source",
+  "未来销售流水 / 商户账户扣款 / 约定支付通道。":"Future sales revenue / merchant account deduction / agreed payment channel.",
+  "控制点":"Control point",
+  "支付通道、账户扣款、还款状态同步、经营数据监控。":"Payment channel, account deduction, repayment status sync, and operating data monitoring.",
+  "证据链":"Evidence chain",
+  "销售、库存、采购、门店活跃、历史还款表现。":"Sales, inventory, purchasing, store activity, and historical repayment performance.",
+  "KiliMax 的价值是提供证据链、状态机和可对账的经营闭环；金融机构负责资金与信用风险。":"KiliMax provides the evidence chain, state machine, and reconcilable operating loop; financial institutions own funding and credit risk.",
+  "证据链：销售、库存、采购、门店活跃、历史还款表现。":"Evidence chain: sales, inventory, purchasing, store activity, and historical repayment performance.",
+  "控制点：支付通道、账户扣款、还款状态同步、经营数据监控。":"Control points: payment channel, account deduction, repayment status sync, and operating data monitoring.",
+  "还款来源：未来销售流水、商户账户扣款或约定支付通道。":"Repayment source: future sales revenue, merchant account deduction, or agreed payment channel.",
+  "基于经营数据判断 eligibility，用于补货、采购、短期周转；放款给商户，通过销售流水、账户扣款或约定通道还款。":"Judge eligibility from operating data; fund replenishment, purchasing, and short-term turnover; disburse to merchants and repay via sales revenue, account deduction, or agreed channel.",
+  "验证融资转化、还款闭环和数据价值。":"Validate financing conversion, repayment loop, and data value.",
+  "适合先做轻量 working capital 试点。":"Best suited for a lightweight working-capital pilot first.",
+  "未来扩展 Supplier Payment Financing、Inventory Financing、PO Financing、Invoice / Receivables Financing 与 Controlled-Use Working Capital。":"Future expansion into Supplier Payment Financing, Inventory Financing, PO Financing, Invoice / Receivables Financing, and Controlled-Use Working Capital.",
+  "需要补齐：PO、Supplier、Goods Receipt、Inventory。":"Need to complete: PO, Supplier, Goods Receipt, Inventory.",
+  "还需闭环：Invoice / Payable、Payment、Reconciliation。":"Also close the loop on Invoice / Payable, Payment, and Reconciliation.",
+  "第一阶段验证轻量 working capital；第二阶段进入更强控制、更重流程的供应链金融":"Phase one validates lightweight working capital; phase two moves into stronger-control, heavier-process supply-chain finance",
+  "当前目标是探索合作可能性，而不是锁定唯一商业模式":"The current goal is to explore cooperation possibilities, not lock in one commercial model",
+  "开放合作模式与责任边界":"Open cooperation model and responsibility boundary",
+  "软件服务":"Software access",
+  "银行将 KiliMax 打包为 SME 商户服务；商户自行订阅；银行 / Fintech 补贴软件订阅。":"The bank packages KiliMax as an SME merchant service; merchants subscribe directly; Bank / Fintech may subsidize software subscriptions.",
+  "融资转化":"Financing conversion",
+  "银行基于 KiliMax 数据提供 financing offer；探索数据服务、技术服务、referral fee 或 revenue share。":"The bank provides financing offers based on KiliMax data; explore data service, technical service, referral fee, or revenue share.",
+  "品牌试点":"Brand / pilot",
+  "联合品牌、白标 / Partner-branded 模式，或针对特定行业做试点包。":"Co-branded, white-label / partner-branded models, or pilot packages for selected industries.",
+  "KiliMax 负责":"KiliMax owns",
+  "入口 · 系统 · 数据 · 授权 · 展示 · 状态同步":"Entry · system · data · consent · display · status sync",
+  "Fintech / 银行负责":"Fintech / Bank owns",
+  "资金 · 信用决策 · 定价 · 合同 · 放款 · 回收 · 合规 · 损失":"Capital · credit decision · pricing · contract · disbursement · recovery · compliance · loss",
+  "第一目标不是锁定商业模式，而是验证商户使用、数据价值和融资转化":"The first goal is not to lock in the commercial model, but to validate merchant usage, data value, and financing conversion",
+  "方案总结":"Summary",
+  "数据变资金":"Data Into Capital",
+  "KiliMax 把 SME 的日常经营沉淀为连续、可验证的数据；银行 / Fintech 在商户授权后使用这些信号，提供更贴近经营节奏的 working capital。":"KiliMax turns daily SME operations into continuous, verifiable data; Bank / Fintech partners use these signals after merchant consent to provide working capital closer to operating rhythms.",
+  "KiliMax 经营系统使用":"KiliMax operating-system usage",
+  "经营数据沉淀":"Operating data capture",
+  "商户授权":"Merchant consent",
+  "还款 / 复贷 / 提额":"Repayment / repeat / uplift"
+};
+
+function normalizeI18nText(text){
+  return text.replace(/\s+/g,' ').trim();
+}
+
+function bootI18n(){
+  const toggle=document.getElementById('lang-toggle');
+  const textNodes=[];
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{
+    acceptNode(node){
+      const parent=node.parentElement;
+      if(!parent || ['SCRIPT','STYLE','NOSCRIPT'].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+      const key=normalizeI18nText(node.nodeValue);
+      return I18N_TEXT[key] ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  });
+  let node;
+  while((node=walker.nextNode())){
+    const key=normalizeI18nText(node.nodeValue);
+    const suffix=(textNodes.length+1).toString().padStart(3,'0');
+    node.__i18nKey=key;
+    node.__i18nZh=node.nodeValue;
+    textNodes.push(node);
+    if(node.parentElement && !node.parentElement.dataset.i18n){
+      node.parentElement.dataset.i18n='t'+suffix;
+    }
+  }
+
+  function applyLang(lang){
+    const next=lang==='en'?'en':'zh';
+    document.documentElement.lang=next==='en'?'en':'zh-CN';
+    document.body.classList.toggle('lang-en',next==='en');
+    document.body.classList.toggle('lang-zh',next==='zh');
+    textNodes.forEach(n=>{
+      n.nodeValue=next==='en' ? I18N_TEXT[n.__i18nKey] : n.__i18nZh;
+    });
+    document.title=next==='en' ? I18N_TEXT["KiliMax + Fintech 非洲 SME 融资合作方案"] : "KiliMax + Fintech 非洲 SME 融资合作方案";
+    if(toggle){
+      toggle.textContent=next==='en'?'EN / CN':'CN / EN';
+      toggle.setAttribute('aria-label',next==='en'?'Switch to Chinese':'Switch to English');
+    }
+    localStorage.setItem('kilimaxPptLang',next);
+  }
+
+  function toggleLang(){
+    applyLang(document.body.classList.contains('lang-en')?'zh':'en');
+  }
+
+  if(toggle) toggle.addEventListener('click',toggleLang);
+  addEventListener('keydown',e=>{
+    if(e.key && e.key.toLowerCase()==='l' && !e.metaKey && !e.ctrlKey && !e.altKey){
+      e.preventDefault();
+      toggleLang();
+    }
+  });
+  applyLang(localStorage.getItem('kilimaxPptLang')==='en'?'en':'zh');
+  window.__setDeckLang=applyLang;
+}
+bootI18n();
+
 /* =============== WebGL 双背景 ===============
    深色页：Holographic Dispersion（全息色散 · 钛金暗流）—— 彩虹微扰、鼠标径向涟漪
    浅色页：Spiral Vortex（旋转涡流 · 银色珍珠）—— domain-warp 流动、无中心
@@ -1052,7 +1468,7 @@ const t0=Date.now();
 const deck=document.getElementById('deck');
 const slides=deck.querySelectorAll('.slide');
 const nav=document.getElementById('nav');
-let idx=0,total=slides.length,lock=false;
+let idx=0,total=slides.length,lock=false,lastNavAt=0;
 
 // 关键：矫正 deck 宽度为 total * 100vw，否则翻页会错位
 deck.style.width=(total*100)+'vw';
@@ -1066,6 +1482,7 @@ slides.forEach((s,i)=>{
 
 function go(n){
   if(lock)return;
+  lastNavAt=performance.now();
   idx=Math.max(0,Math.min(total-1,n));
   deck.style.transform=`translateX(${-idx*100}vw)`;
   nav.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
@@ -1129,34 +1546,69 @@ addEventListener('keydown',e=>{
   if(e.key==='End')go(total-1);
 });
 
-let wheelTO=null,wheelAcc=0;
-addEventListener('wheel',e=>{
-  wheelAcc+=e.deltaY+e.deltaX;
-  if(Math.abs(wheelAcc)>50){
-    if(wheelAcc>0 && window.__pipeAdvance && window.__pipeAdvance()){
-      wheelAcc=0;
-    }else{
-      go(idx+(wheelAcc>0?1:-1));wheelAcc=0;
-    }
-  }
-  clearTimeout(wheelTO);wheelTO=setTimeout(()=>wheelAcc=0,150);
-},{passive:true});
+document.querySelector('.nav-edge.prev').addEventListener('click',()=>go(idx-1));
+document.querySelector('.nav-edge.next').addEventListener('click',()=>go(idx+1));
 
-let tx=0,ty=0;
-addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+function advanceByGesture(direction){
+  const now=performance.now();
+  if(now-lastNavAt<1150) return false;
+  if(direction>0 && window.__pipeAdvance && window.__pipeAdvance()){
+    lastNavAt=now;
+    return true;
+  }
+  go(idx+(direction>0?1:-1));
+  return true;
+}
+
+let wheelTO=null,wheelX=0,wheelY=0,wheelCoolingUntil=0;
+addEventListener('wheel',e=>{
+  e.preventDefault();
+  const now=performance.now();
+  if(now<wheelCoolingUntil) return;
+  wheelX+=e.deltaX;
+  wheelY+=e.deltaY;
+  const primary=Math.abs(wheelX)>Math.abs(wheelY)?wheelX:wheelY;
+  if(Math.abs(primary)>90){
+    if(advanceByGesture(primary>0?1:-1)){
+      wheelCoolingUntil=now+1250;
+    }
+    wheelX=0;wheelY=0;
+  }
+  clearTimeout(wheelTO);wheelTO=setTimeout(()=>{wheelX=0;wheelY=0},220);
+},{passive:false});
+
+let tx=0,ty=0,tt=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;tt=performance.now()},{passive:true});
 addEventListener('touchend',e=>{
   const dx=(e.changedTouches[0].clientX-tx);
   const dy=(e.changedTouches[0].clientY-ty);
-  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){
-    if(dx<0 && window.__pipeAdvance && window.__pipeAdvance()) return;
-    go(idx+(dx<0?1:-1));
+  if(Math.abs(dx)>54&&Math.abs(dx)>Math.abs(dy)*1.25){
+    if(advanceByGesture(dx<0?1:-1)){
+      wheelCoolingUntil=performance.now()+1250;
+    }
+  }
+},{passive:true});
+
+let px=0,py=0,pt=0,pointerDragging=false;
+addEventListener('pointerdown',e=>{
+  if(e.pointerType==='touch' || e.button!==0 || e.target.closest('button')) return;
+  px=e.clientX;py=e.clientY;pt=performance.now();pointerDragging=true;
+},{passive:true});
+addEventListener('pointerup',e=>{
+  if(!pointerDragging) return;
+  pointerDragging=false;
+  const dx=e.clientX-px;
+  const dy=e.clientY-py;
+  const dt=performance.now()-pt;
+  if(dt<1200 && Math.abs(dx)>86 && Math.abs(dx)>Math.abs(dy)*1.35){
+    advanceByGesture(dx<0?1:-1);
   }
 },{passive:true});
 
 go(0);
 </script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script>lucide.createIcons();</script>
+<script>if(window.lucide) lucide.createIcons();</script>
 
 <!-- ============ Motion One 动效引擎（本地优先,CDN 兜底） ============
      加载策略:先 ./assets/motion.min.js(本地,离线可用),失败 fallback 到 jsDelivr CDN
