@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KiliMax + Fintech 非洲 SME 融资合作方案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ============ 主题色(默认:🖋 墨水经典) ============
+       切换主题:从 references/themes.md 复制对应的 :root 块
+       整体替换这几行(--ink / --ink-rgb / --paper / --paper-rgb)
+       其他地方散落的 rgba() 都走 var(--ink-rgb) / var(--paper-rgb),无需逐处改 */
+    --ink:#1a2e1f;
+    --ink-rgb:26,46,31;
+    --paper:#f5f1e8;
+    --paper-rgb:245,241,232;
+    --paper-tint:#ece7da;
+    --ink-tint:#253d2c;
+
+    /* ============ 字体(跨主题固定) ============ */
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --serif-en:"Playfair Display","Source Serif 4",Georgia,serif;
+    --serif-body-en:"Source Serif 4",Georgia,serif;
+    --serif-zh:"Noto Serif SC",source-han-serif-sc,serif;
+    --sans-zh:"Noto Sans SC",source-han-sans-sc,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--ink);color:var(--paper);font-family:var(--sans-zh);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+  /* ============ WebGL 双背景 ============ */
+  canvas.bg{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;transition:opacity 1.2s ease}
+  canvas#bg-light{opacity:0}
+  canvas#bg-dark{opacity:1}
+  body.light-bg canvas#bg-light{opacity:1}
+  body.light-bg canvas#bg-dark{opacity:0}
+
+  /* ============ Deck 容器 + 翻页 ============ */
+  /* width: NSLIDES * 100vw，会在 JS 里动态矫正 */
+  #deck{position:fixed;inset:0;width:10000vw;height:100vh;display:flex;flex-wrap:nowrap;transition:transform .9s cubic-bezier(.77,0,.175,1);z-index:10;will-change:transform}
+  .slide{width:100vw;height:100vh;flex:0 0 100vw;position:relative;padding:6vh 6vw 10vh 6vw;display:flex;flex-direction:column;overflow:hidden}
+  .slide.light{color:var(--ink);background:var(--paper)}
+  .slide.dark{color:var(--paper);background:var(--ink)}
+
+  /* 默认页：遮罩较厚，保证文字可读 */
+  .slide::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;transition:background .7s ease}
+  .slide.light::before{background:rgba(var(--paper-rgb),.78);backdrop-filter:blur(3px)}
+  .slide.dark::before{background:rgba(var(--ink-rgb),.78);backdrop-filter:blur(3px)}
+  /* Hero 页：遮罩大幅降低，让 WebGL 背景明显透出 */
+  .slide.hero.light::before{background:rgba(var(--paper-rgb),.16);backdrop-filter:none}
+  .slide.hero.dark::before{background:rgba(var(--ink-rgb),.12);backdrop-filter:none}
+  /* Hero 页顶底微弱渐隐，保证 chrome/foot 区域可读 */
+  .slide.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+  .slide.hero.light::after{background:linear-gradient(180deg,rgba(var(--paper-rgb),.28) 0%,rgba(var(--paper-rgb),0) 14%,rgba(var(--paper-rgb),0) 86%,rgba(var(--paper-rgb),.28) 100%)}
+  .slide.hero.dark::after{background:linear-gradient(180deg,rgba(var(--ink-rgb),.32) 0%,rgba(var(--ink-rgb),0) 14%,rgba(var(--ink-rgb),0) 86%,rgba(var(--ink-rgb),.32) 100%)}
+
+  /* ============ Magazine chrome：顶部 meta + 底部 foot ============ */
+  .chrome{display:flex;justify-content:space-between;align-items:flex-start;font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+  .chrome .left,.chrome .right{display:flex;gap:2.4em;align-items:center}
+  .chrome .sep{width:40px;height:1px;background:currentColor;opacity:.4}
+  .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.55}
+  .foot .title{font-family:var(--serif-zh);font-weight:400;letter-spacing:.05em;text-transform:none;opacity:.75;font-size:13px}
+  .brand-bug{position:absolute;right:6vw;top:8.7vh;z-index:4;width:118px;height:auto;opacity:.78;pointer-events:none}
+  .slide.light .brand-bug{filter:none;opacity:.72}
+  .slide.dark .brand-bug,.slide.hero.dark .brand-bug{opacity:.88}
+  .brand-cover{width:min(33vw,420px);height:auto;display:block;margin-bottom:1.5vh;filter:drop-shadow(0 12px 28px rgba(0,0,0,.18))}
+  .brand-mark-ghost{position:absolute;right:-2vw;bottom:4vh;width:28vw;opacity:.055;pointer-events:none}
+
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;padding:6px 14px;border:1px solid currentColor;opacity:.85}
+  .rule{width:100%;height:1px;background:currentColor;opacity:.25;margin:3vh 0}
+  .rule.v{width:1px;height:100%;margin:0}
+
+  /* ============ 字体规则 ============
+     · 衬线（Noto Serif SC / Playfair）：大标题、重点金句、数字
+     · 非衬线（Noto Sans SC）：正文描述、body、补充说明
+     · 等宽（IBM Plex Mono）：kicker、meta 小标签、foot 右侧
+  */
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin-bottom:2.6vh}
+  .display{font-family:var(--serif-en);font-weight:700;font-size:11vw;line-height:.92;letter-spacing:-.025em}
+  .display-zh{font-family:var(--serif-zh);font-weight:700;font-size:7.8vw;line-height:1.04;letter-spacing:-.005em}
+  .h1-zh{font-family:var(--serif-zh);font-weight:700;font-size:4.6vw;line-height:1.12;letter-spacing:-.005em}
+  .h2-zh{font-family:var(--serif-zh);font-weight:600;font-size:3.2vw;line-height:1.2;letter-spacing:0}
+  .h3-zh{font-family:var(--serif-zh);font-weight:500;font-size:1.9vw;line-height:1.35}
+  .body-zh{font-family:var(--sans-zh);font-weight:400;font-size:max(15px,1.22vw);line-height:1.75;opacity:.82;letter-spacing:.01em}
+  .body-serif{font-family:var(--serif-zh);font-weight:400;font-size:max(15px,1.3vw);line-height:1.65;opacity:.88}
+  .lead{font-family:var(--serif-zh);font-weight:400;font-size:1.9vw;line-height:1.4;opacity:.85}
+  .meta{font-family:var(--mono);font-size:max(11px,.88vw);letter-spacing:.16em;text-transform:uppercase;opacity:.6}
+  .big-num{font-family:var(--serif-en);font-weight:800;font-size:10vw;line-height:.85;letter-spacing:-.03em;font-feature-settings:"tnum"}
+  .mid-num{font-family:var(--serif-en);font-weight:700;font-size:5.5vw;line-height:.88;letter-spacing:-.02em;font-feature-settings:"tnum"}
+  .ghost{font-family:var(--serif-en);font-weight:900;font-size:34vw;line-height:.8;opacity:.06;letter-spacing:-.04em;position:absolute;font-feature-settings:"tnum"}
+  em{font-style:italic;font-family:var(--serif-en)}
+  .en{font-family:var(--serif-en);font-style:italic;font-weight:500}
+
+  /* ============ 布局工具 ============ */
+  .col{display:flex;flex-direction:column;gap:2.4vh}
+  .row{display:flex;align-items:center;gap:3vw}
+  .grid-6{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4vw 6vw;flex:1;align-content:center;padding:2vh 0}
+  .grid-9{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3vh 4vw;flex:1;align-content:center}
+  .grid-4{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:4vh 6vw;flex:1;align-content:center}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:4vw;flex:1;align-content:center}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:4vw;flex:1;align-items:center}
+  .split-55{display:grid;grid-template-columns:55fr 45fr;gap:5vw;flex:1;align-items:stretch}
+  .fill{flex:1}
+  .center{align-items:center;justify-content:center;text-align:center}
+  .bottom-left{position:absolute;left:6vw;bottom:9vh;max-width:50vw}
+  .bottom-right{position:absolute;right:6vw;bottom:9vh;max-width:50vw;text-align:right}
+  .top-right{position:absolute;right:6vw;top:6vh;text-align:right}
+
+  /* ============ Stat（数字矩阵） ============ */
+  .stat{display:flex;flex-direction:column;gap:1vh;align-items:flex-start}
+  .stat .n{font-family:var(--serif-en);font-weight:800;font-size:8vw;line-height:.88;letter-spacing:-.03em;font-feature-settings:"tnum"}
+  .stat .l{font-family:var(--sans-zh);font-size:max(13px,1.05vw);opacity:.7;margin-top:1vh;font-weight:400;line-height:1.5}
+  .stat .m{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.5;margin-bottom:.2vh}
+
+  /* ============ Callout（引用框） ============ */
+  .callout{padding:3vh 2.4vw;border-left:3px solid currentColor;position:relative;font-family:var(--serif-zh);font-size:max(15px,1.2vw);line-height:1.55;opacity:.92}
+  .slide.light .callout{background:rgba(var(--ink-rgb),.05)}
+  .slide.dark .callout{background:rgba(var(--paper-rgb),.06)}
+  .callout .cite{display:block;margin-top:1.6vh;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6}
+  .callout .q-big{font-family:var(--serif-zh);font-weight:600;font-size:max(17px,1.6vw);line-height:1.42}
+  .mini-list{display:grid;gap:.82vh;margin-top:1.75vh;font-family:var(--sans-zh);font-size:max(12px,.9vw);line-height:1.38;opacity:.78}
+  .mini-list span{display:block;padding-top:.66vh;border-top:1px solid rgba(127,127,127,.28)}
+  .mini-list.two{grid-template-columns:1fr 1fr;gap:1vh 1.2vw}
+  .mini-list.three{grid-template-columns:repeat(3,1fr);gap:1vh 1.2vw}
+  .dense-row{display:grid;grid-template-columns:1.1fr 1.8fr 1.1fr;gap:1.1vw;padding:1.35vh 0;border-top:1px solid rgba(127,127,127,.24);align-items:start}
+  .dense-row .k{font-family:var(--serif-zh);font-weight:700;font-size:1.18vw;line-height:1.25}
+  .dense-row .v{font-family:var(--sans-zh);font-size:max(12px,.9vw);line-height:1.45;opacity:.78}
+  .dense-row .m{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.55;text-align:right}
+  .map-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.15vw 1.4vw}
+  .map-item{display:grid;grid-template-columns:1.15fr 1.45fr;gap:1vw;padding:1.35vh 0;border-top:1px solid rgba(127,127,127,.28)}
+  .map-item .k{font-family:var(--serif-zh);font-weight:700;font-size:1.28vw;line-height:1.22}
+  .map-item .v{font-family:var(--sans-zh);font-size:max(12px,.92vw);line-height:1.38;opacity:.76}
+  .quadrant{display:grid;grid-template-columns:repeat(2,1fr);gap:2.2vh 2vw}
+  .quad{padding:2vh 1.5vw;border-top:2px solid currentColor;background:rgba(127,127,127,.08);min-height:19vh}
+  .quad .t{font-family:var(--serif-zh);font-weight:700;font-size:2vw;line-height:1.18}
+  .quad .d{font-family:var(--sans-zh);font-size:max(12px,.95vw);line-height:1.48;opacity:.78;margin-top:1.2vh}
+  .signal-table{display:grid;gap:0}
+  .signal-row{display:grid;grid-template-columns:1.05fr 1.5fr 1.05fr;gap:1.4vw;align-items:start;padding:1.45vh 0;border-top:1px solid rgba(127,127,127,.25)}
+  .signal-row .k{font-family:var(--serif-zh);font-weight:700;font-size:1.25vw;line-height:1.25}
+  .signal-row .v,.signal-row .m{font-family:var(--sans-zh);font-size:max(12px,.92vw);line-height:1.4;opacity:.78}
+  .signal-row .m{font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;font-size:10px}
+  .flow-bands{display:grid;grid-template-columns:1fr 1fr;gap:2vw;margin-top:3.5vh}
+  .flow-band{padding:2vh 1.5vw;border-top:2px solid currentColor;background:rgba(127,127,127,.08)}
+  .flow-band .label{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.6;margin-bottom:1.5vh}
+  .flow-steps{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2vh 1vw}
+  .flow-step{padding-top:1vh;border-top:1px solid rgba(127,127,127,.28)}
+  .flow-step .n{font-family:var(--serif-en);font-style:italic;opacity:.55}
+  .flow-step .t{font-family:var(--serif-zh);font-weight:700;font-size:1.15vw;line-height:1.2}
+  .flow-step .d{font-family:var(--sans-zh);font-size:max(11px,.82vw);line-height:1.35;opacity:.72;margin-top:.5vh}
+
+  /* ============ Platform（平台卡） ============ */
+  .plat{display:flex;flex-direction:column;justify-content:flex-end;padding:2vh 0;border-top:1px solid currentColor;border-color:rgba(127,127,127,.35)}
+  .plat .name{font-family:var(--serif-zh);font-weight:700;font-size:1.8vw;margin-bottom:.6vh}
+  .plat .nb{font-family:var(--serif-en);font-weight:700;font-size:3.2vw;letter-spacing:-.02em;line-height:1;font-feature-settings:"tnum"}
+  .plat .sub{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.55;margin-top:.6vh}
+  .plat .fill{font-family:var(--sans-zh);font-weight:300;font-size:2.4vw;opacity:.28;letter-spacing:-.01em;line-height:1}
+
+  /* ============ Rowline（表格行） ============ */
+  .rowline{display:grid;grid-template-columns:1fr 2fr 1fr;gap:2vw;padding:2.2vh 0;border-top:1px solid currentColor;align-items:center;border-color:rgba(127,127,127,.25)}
+  .rowline:last-child{border-bottom:1px solid currentColor;border-color:rgba(127,127,127,.25)}
+  .rowline .k{font-family:var(--serif-zh);font-weight:700;font-size:1.7vw}
+  .rowline .v{font-family:var(--sans-zh);font-weight:400;font-size:max(14px,1.2vw);opacity:.85;line-height:1.55}
+  .rowline .m{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;justify-self:end}
+
+  /* ============ Pillar（支柱卡片） ============ */
+  .pillar{display:flex;flex-direction:column;gap:1.8vh}
+  .pillar .ic{font-family:var(--serif-en);font-style:italic;font-size:2.6vw;opacity:.45;font-weight:400}
+  .pillar .ic svg{width:2.8vw;height:2.8vw;stroke-width:1.2;opacity:.7}
+  .pillar .t{font-family:var(--serif-zh);font-weight:700;font-size:2.4vw;line-height:1.1}
+  .pillar .d{font-family:var(--sans-zh);font-weight:400;font-size:max(14px,1.1vw);opacity:.76;line-height:1.6}
+
+  /* ============ Signature / Highlight ============ */
+  .sign{font-family:var(--serif-en);font-style:italic;font-weight:500;font-size:2vw;opacity:.7}
+  .hi{position:relative;display:inline}
+  .slide.dark .hi::after{content:"";position:absolute;left:-.1em;right:-.1em;bottom:-.05em;height:.28em;background:rgba(var(--paper-rgb),.15);z-index:-1}
+  .slide.light .hi::after{content:"";position:absolute;left:-.1em;right:-.1em;bottom:-.05em;height:.28em;background:rgba(var(--ink-rgb),.08);z-index:-1}
+
+  /* ============ Icons（Lucide via CDN） ============ */
+  .ico{width:1em;height:1em;display:inline-block;vertical-align:-.12em;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  .ico-lg,.ico-md,.ico-sm{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+  .ico-lg{width:2.6vw;height:2.6vw;stroke-width:1.2;display:inline-block}
+  .ico-md{width:1.8vw;height:1.8vw;stroke-width:1.3;display:inline-block;vertical-align:-.4em}
+  .ico-sm{width:1.1vw;height:1.1vw;stroke-width:1.4;display:inline-block;vertical-align:-.15em;opacity:.7}
+
+  /* ============ 图片占位（虚线框，提示设计师位置） ============ */
+  .img-slot{border:1.5px dashed rgba(127,127,127,.4);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1vh;padding:2vh 2vw;font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;opacity:.55;position:relative;aspect-ratio:16/9;width:100%;max-height:56vh;margin-inline:auto;box-sizing:border-box}
+  .img-slot::before{content:"";position:absolute;inset:8px;border:1px solid currentColor;opacity:.2}
+  .img-slot .plus{font-size:2vw;font-weight:300;opacity:.5;letter-spacing:0}
+  .img-slot .label{position:relative;z-index:2;text-align:center}
+  .img-slot.r-4x3{aspect-ratio:4/3}
+  .img-slot.r-3x2{aspect-ratio:3/2}
+  .img-slot.r-1x1{aspect-ratio:1/1}
+
+  /* ============ 图片实填框（关键：固定高度 + 只裁底部） ============
+     重要约束：高度用内联 height:Nvh 精确控制，不要用 aspect-ratio（会撑破布局）
+     object-position:top center 保证严禁裁剪顶部和左右，只裁剪底部
+  */
+  .frame-img{overflow:hidden;position:relative;background:rgba(0,0,0,.04);box-sizing:border-box;width:100%;border-radius:4px}
+  .slide.dark .frame-img{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+  .frame-img > img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .frame-img.fit-contain > img{object-fit:contain;object-position:center center}
+  .frame-img.r-16x9{aspect-ratio:16/9;max-height:64vh}
+  .frame-img.r-16x10{aspect-ratio:16/10;max-height:56vh}
+  .frame-img.r-4x3{aspect-ratio:4/3;max-height:56vh}
+  .frame-img.r-3x2{aspect-ratio:3/2;max-height:46vh}
+  .frame-img.r-3x4{aspect-ratio:3/4;max-height:60vh}
+  .frame-img.r-1x1{aspect-ratio:1/1;max-height:50vh}
+  .frame-img.h-16{height:16vh}
+  .frame-img.h-18{height:18vh}
+  .frame-img.h-22{height:22vh}
+  .frame-img.h-26{height:26vh}
+  .frame-img.h-28{height:28vh}
+  .frame-cap{display:flex;justify-content:space-between;align-items:baseline;gap:1vw;margin-top:.8vh;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.72}
+  .frame-cap .pf{font-family:var(--serif-zh);font-weight:600;font-size:max(13px,1vw);letter-spacing:.04em;text-transform:none;opacity:.94}
+  .frame-cap .nb{font-family:var(--serif-en);font-style:italic;font-size:max(15px,1.2vw);letter-spacing:.02em;text-transform:none;opacity:.88}
+  .frame-cap .idx{font-family:var(--mono);opacity:.5}
+  figure.tile{display:flex;flex-direction:column;margin:0;min-width:0}
+  figure.tile > .frame-img{flex:0 0 auto}
+
+  /* ============ 导航 ============ */
+  #nav{position:fixed;left:50%;bottom:2.6vh;transform:translateX(-50%);z-index:30;display:flex;gap:10px;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  #nav .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .3s ease;border:0;padding:0}
+  #nav .dot:hover{background:rgba(255,255,255,.5);transform:scale(1.15)}
+  #nav .dot.active{background:rgba(255,255,255,.95);width:22px;border-radius:999px}
+  body.light-bg #nav{background:rgba(255,255,255,.25)}
+  body.light-bg #nav .dot{background:rgba(var(--ink-rgb),.25)}
+  body.light-bg #nav .dot.active{background:rgba(var(--ink-rgb),.9)}
+  #hint{position:fixed;bottom:3vh;right:3vw;z-index:30;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.4;mix-blend-mode:difference;color:#aaa}
+
+  /* ============================================================
+     ============ LAYOUTS API · 面向 agent 的类（v2）============
+     所有 layouts.md 中的骨架都基于下面这套命名。
+     如果你在 layouts.md 里看到某个类，它必须在下面有定义。
+     ============================================================ */
+
+  /* ---------- .frame：每页主内容容器 ---------- */
+  .frame{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+  /* 当 .frame 同时加了 grid 类时，grid 的 display:grid 覆盖 flex */
+  .frame.grid-2-7-5,
+  .frame.grid-2-6-6,
+  .frame.grid-2-8-4,
+  .frame.grid-3-3,
+  .frame.grid-6{display:grid}
+
+  /* ---------- 标题层级（API 名称，衬线为主） ---------- */
+  .h-hero{
+    font-family:var(--serif-zh);
+    font-weight:900;
+    font-size:10vw;
+    line-height:.96;
+    letter-spacing:-.02em;
+  }
+  .h-xl{
+    font-family:var(--serif-zh);
+    font-weight:700;
+    font-size:6.2vw;
+    line-height:1.08;
+    letter-spacing:-.01em;
+  }
+  .h-sub{
+    font-family:var(--serif-zh);
+    font-weight:500;
+    font-size:3.1vw;
+    line-height:1.25;
+    letter-spacing:0;
+    opacity:.7;
+  }
+  .h-md{
+    font-family:var(--serif-zh);
+    font-weight:600;
+    font-size:2.3vw;
+    line-height:1.3;
+  }
+  /* 英文标题专用（Playfair 衬线） */
+  .h-hero-en,.h-xl-en{font-family:var(--serif-en);letter-spacing:-.025em}
+
+  /* ---------- lead 引语 ---------- */
+  .lead{
+    font-family:var(--serif-zh);
+    font-weight:400;
+    font-size:1.75vw;
+    line-height:1.5;
+    opacity:.86;
+  }
+
+  /* ---------- meta-row 底部元数据 ---------- */
+  .meta-row{
+    display:flex;
+    gap:1.2em;
+    align-items:baseline;
+    flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:max(12px,.92vw);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+
+  /* ---------- stat-card（数据大字报用） ---------- */
+  .stat-card{
+    display:flex;
+    flex-direction:column;
+    gap:.8vh;
+    align-items:flex-start;
+    padding-top:1.6vh;
+    border-top:1px solid currentColor;
+    border-color:rgba(127,127,127,.3);
+  }
+  .stat-card .stat-label{
+    font-family:var(--mono);
+    font-size:max(10px,.78vw);
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    opacity:.55;
+  }
+  .stat-card .stat-nb{
+    font-family:var(--serif-en);
+    font-weight:800;
+    font-size:5.8vw;
+    line-height:.9;
+    letter-spacing:-.03em;
+    font-feature-settings:"tnum";
+    margin-top:.4vh;
+  }
+  .stat-card .stat-nb .stat-unit{
+    font-family:var(--serif-zh);
+    font-weight:500;
+    font-size:.38em;
+    letter-spacing:0;
+    opacity:.72;
+    margin-left:.14em;
+  }
+  .stat-card .stat-note{
+    font-family:var(--sans-zh);
+    font-weight:400;
+    font-size:max(13px,1.05vw);
+    line-height:1.5;
+    opacity:.72;
+    margin-top:.6vh;
+  }
+  /* 当 stat-card 用于 grid-4（2x2），数字适度放大；若页面有标题+引文在上方，可内联 style 覆盖为更小值 */
+  .grid-4 .stat-card .stat-nb{font-size:5vw}
+  /* 当只有 3 个，字也可以稍大 */
+  .grid-3 .stat-card .stat-nb{font-size:6.8vw}
+
+  /* ---------- pipeline（流水线） ---------- */
+  .pipeline-section{
+    margin-top:4.4vh;
+    padding-top:2.8vh;
+    border-top:1px dashed rgba(127,127,127,.32);
+  }
+  .pipeline-section:first-of-type{
+    border-top:0;
+    padding-top:0;
+    margin-top:3vh;
+  }
+  .pipeline-label{
+    font-family:var(--mono);
+    font-size:max(11px,.85vw);
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    opacity:.62;
+    margin-bottom:2.2vh;
+  }
+  .pipeline{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1.2vw;
+  }
+  .pipeline[data-cols="3"]{grid-template-columns:repeat(3,1fr)}
+  .pipeline[data-cols="4"]{grid-template-columns:repeat(4,1fr)}
+  .pipeline[data-cols="6"]{grid-template-columns:repeat(6,1fr)}
+  .step{
+    display:flex;
+    flex-direction:column;
+    gap:.8vh;
+    padding-top:1.4vh;
+    border-top:1px solid currentColor;
+    border-color:rgba(127,127,127,.35);
+  }
+  .step-nb{
+    font-family:var(--serif-en);
+    font-style:italic;
+    font-weight:500;
+    font-size:1.15vw;
+    opacity:.45;
+  }
+  .step-title{
+    font-family:var(--sans-zh);
+    font-weight:700;
+    font-size:1.55vw;
+    letter-spacing:.01em;
+    line-height:1.2;
+  }
+  .step-desc{
+    font-family:var(--sans-zh);
+    font-weight:400;
+    font-size:max(12px,.95vw);
+    line-height:1.45;
+    opacity:.72;
+  }
+
+  /* ---------- 网格（layouts.md 所用） ---------- */
+  /* 这些类独立挂到任何容器上都能生效，不依赖 .frame 复合选择器 */
+  .grid-2-7-5{display:grid;grid-template-columns:7fr 5fr;gap:3vw 4vh;align-items:start}
+  .grid-2-6-6{display:grid;grid-template-columns:1fr 1fr;gap:3vw 4vh;align-items:start}
+  .grid-2-8-4{display:grid;grid-template-columns:8fr 4fr;gap:3vw 4vh;align-items:start}
+  .grid-3-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-auto-rows:minmax(0,1fr);
+    gap:2.4vh 2vw;
+  }
+  /* grid-6 已在旧样式里定义为 3x2，这里仅补 align */
+
+  /* ---------- 图片 frame-img（layouts.md 主命名） ---------- */
+  /* 在旧样式里已定义，这里补 img-cap 命名别名与增强 */
+  figure.frame-img{margin:0;display:flex;flex-direction:column;min-width:0}
+  .img-cap{
+    display:block;
+    margin-top:.8vh;
+    font-family:var(--mono);
+    font-size:max(10px,.8vw);
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+  /* callout src 命名别名 */
+  .callout-src{
+    display:block;
+    margin-top:1.6vh;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+
+  /* ---------- chrome & foot 补位（layouts.md 简单写法） ---------- */
+  .chrome{font-family:var(--mono);font-size:max(11px,.78vw);letter-spacing:.2em;text-transform:uppercase;opacity:.62}
+  .foot{font-family:var(--mono);font-size:max(11px,.78vw);letter-spacing:.18em;text-transform:uppercase;opacity:.5}
+
+  /* ============ 动效系统(Motion One 驱动) ============
+     所有 [data-anim] 元素默认隐藏,进入页面时由 JS 逐个揭示。
+     - cascade(默认):按 DOM 顺序 stagger 120ms 淡入 + y:16→0
+     - hero(hero 页自动):慢一点的 stagger 180ms
+     - quote(含 [data-anim="line"]):逐行 600ms 淡入
+     - directional(含 [data-anim="left|right"]):左→分隔线→右
+     - pipeline(data-animate="pipeline"):Space/→ 手动推进
+     Motion One 没加载成功时(CDN 断 + 本地丢),所有 [data-anim] 会兜底显示。
+  */
+  [data-anim]{opacity:1}
+  body.motion-ready [data-anim]{opacity:0}
+  body.motion-ready [data-anim="left"]{transform:translateX(-24px)}
+  body.motion-ready [data-anim="right"]{transform:translateX(24px)}
+  body.motion-ready [data-anim="line"]{opacity:0;transform:translateY(10px)}
+  body.motion-ready [data-animate="pipeline"] [data-anim]{opacity:.15}
+
+  /* ---------- 响应式降级 ---------- */
+  @media (max-width:900px){
+    .display{font-size:16vw}
+    .display-zh{font-size:12vw}
+    .h1-zh{font-size:7vw}
+    .h-hero{font-size:14vw}
+    .h-xl{font-size:9vw}
+    .pipeline{grid-template-columns:repeat(2,1fr)}
+    .grid-2-7-5,.grid-2-6-6,.grid-2-8-4{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-dark" class="bg"></canvas>
+<canvas id="bg-light" class="bg"></canvas>
+<div id="hint">← → 翻页 · ESC 索引</div>
+
+<div id="deck">
+
+<!-- ============================================================
+     SLIDES 插入区 · 在此处填充所有 <section class="slide ..."> 页面
+     每页模板参考 references/page-patterns.md
+     页面组件参考 references/components.md
+     ============================================================ -->
+
+
+<section class="slide hero dark" style="background-image:linear-gradient(90deg,rgba(26,46,31,.92) 0%,rgba(26,46,31,.72) 42%,rgba(26,46,31,.22) 100%),url('images/01-cover-sme-market.png');background-size:cover;background-position:center">
+  <div class="chrome"><div>KiliMax · West Africa Banking Partnership</div><div>Vol.01</div></div>
+  <div class="frame" style="display:grid;gap:2.5vh;align-content:center;min-height:80vh">
+    <img class="brand-cover" src="images/kilimax-logo-light.svg" alt="KiliMax logo" data-anim>
+    <div class="kicker" data-anim>SME Operations · Working Capital</div>
+    <h1 class="h-hero" style="font-size:8.4vw" data-anim>SME 融资</h1>
+    <h2 class="h-sub" data-anim>KiliMax + Fintech 非洲合作方案</h2>
+    <p class="lead" style="max-width:64vw" data-anim>KiliMax 数字化非洲 SME 的真实经营活动；Fintech / 银行将经营数据转化为经营周转资金，共同探索可规模化的 SME 融资合作模式。</p>
+    <div class="meta-row" data-anim><span>Africa SME</span><span>Operating Data</span><span>Embedded Finance</span></div>
+  </div>
+  <div class="foot"><div>基于 KiliMax 经营数据的非洲 SME 经营周转融资合作探索</div><div>2026</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome"><div>Opportunity · Cooperation Logic</div><div>02 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.6vh">
+    <div class="kicker" data-anim>这是一个“经营系统 + 金融能力”的合作机会</div>
+    <h2 class="h-xl" style="font-size:4.8vw" data-anim>银行要服务 SME，先要看见 SME</h2>
+    <p class="lead" style="max-width:74vw;margin-top:1.6vh" data-anim>KiliMax 已经在非洲 SME 的真实经营场景中覆盖零售、批发、门店经营、库存、销售、采购和支付等日常流程。</p>
+    <div class="grid-2-6-6" style="margin-top:4.5vh;gap:3vw" data-anim>
+      <div>
+        <div class="kicker" style="margin-bottom:1.6vh">Bank / Fintech Pain</div>
+        <div class="quadrant" style="gap:1.4vh 1.2vw">
+          <div class="quad" style="min-height:15vh"><div class="t">获客成本高</div><div class="d">难以低成本识别真实活跃、适合服务的 SME。</div></div>
+          <div class="quad" style="min-height:15vh"><div class="t">经营数据不足</div><div class="d">缺少销售、库存、采购、门店活跃等连续信号。</div></div>
+          <div class="quad" style="min-height:15vh"><div class="t">贷后监控弱</div><div class="d">放款后难以及时观察经营改善、恶化或异常。</div></div>
+          <div class="quad" style="min-height:15vh"><div class="t">小额服务成本高</div><div class="d">人工审批、催收和复贷判断难以规模化。</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="kicker" style="margin-bottom:1.6vh">Cooperation Split</div>
+        <div class="dense-row"><div class="k">KiliMax 提供</div><div class="v">商户入口、经营系统、ERP/POS 使用、经营数据、融资产品触点。</div><div class="m">System / Data</div></div>
+        <div class="dense-row"><div class="k">银行提供</div><div class="v">资金来源、授信政策、额度定价、合同签署、放款、还款、合规。</div><div class="m">Capital / Risk</div></div>
+        <div class="dense-row"><div class="k">共同验证</div><div class="v">商户使用、数据价值、融资转化、还款闭环、复贷提额潜力。</div><div class="m">Pilot Goals</div></div>
+        <div class="callout" style="margin-top:2.3vh;padding:2vh 1.6vw">KiliMax 不是贷款方，而是银行服务 SME 的经营软件层、数据层和金融产品触点。</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div>KiliMax 是银行服务 SME 的经营软件层、数据层和产品触点</div><div>Opportunity</div></div>
+</section>
+
+<section class="slide dark" data-animate="directional">
+  <div class="chrome"><div>Platform · What KiliMax Is</div><div>03 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame grid-2-7-5" style="padding-top:7vh">
+    <div class="col" style="gap:2.4vh" data-anim="left">
+      <div class="kicker">KiliMax 是什么</div>
+      <h2 class="h-xl" style="font-size:4.7vw">非洲 SME 的日常经营系统</h2>
+      <p class="lead">面向零售商户、批发商、分销商、门店型商户、小型连锁门店，未来可扩展到美业、餐饮和本地服务。</p>
+      <div class="mini-list two">
+        <span>核心模块：ERP、POS、库存管理、销售管理、采购管理、商品 / SKU 管理。</span>
+        <span>经营对象：客户、员工、门店、订单、收款、供应商与日常操作记录。</span>
+        <span>金融延展：支付和收款相关能力、经营数据授权、AI-powered operating insights。</span>
+        <span>合作定位：日常经营系统、数据入口、银行金融产品触点。</span>
+      </div>
+      <div class="callout"><span class="q-big">KiliMax 不只是管理软件，而是 SME 商户的日常经营系统和数据入口。</span><span class="callout-src">ERP · POS · Inventory · Sales · AI Insights</span></div>
+    </div>
+    <div class="grid-4" style="gap:3vh 2vw" data-anim="right">
+      <div class="pillar"><i data-lucide="scan-line" class="ico-lg"></i><div class="t">开单与收款</div><div class="d">POS、销售、门店流水和支付相关能力。</div></div>
+      <div class="pillar"><i data-lucide="boxes" class="ico-lg"></i><div class="t">库存与 SKU</div><div class="d">商品、库存、盘点、动销和补货信号。</div></div>
+      <div class="pillar"><i data-lucide="store" class="ico-lg"></i><div class="t">门店管理</div><div class="d">多门店经营表现、员工操作和门店活跃。</div></div>
+      <div class="pillar"><i data-lucide="sparkles" class="ico-lg"></i><div class="t">AI Insights</div><div class="d">把经营数据转成画像、增长信号和异常提示。</div></div>
+    </div>
+  </div>
+  <div class="foot"><div>日常系统先跑起来，金融机会才有可信土壤</div><div>Platform</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome"><div>Proof · Customer Signals</div><div>04 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4vh">
+    <div class="kicker" data-anim>真实客户案例验证</div>
+    <h2 class="h-xl" style="font-size:4.7vw" data-anim>已沉淀可融资经营信号</h2>
+    <div class="grid-2-7-5" style="margin-top:4.5vh;align-items:start">
+      <figure class="frame-img r-16x9" style="max-height:49vh" data-anim>
+        <img src="images/04-customer-cases.png" alt="西非 SME 客户案例三联图">
+        <figcaption class="img-cap">Nigeria mobile retail · Ghana multi-store · Ghana distribution</figcaption>
+      </figure>
+      <div class="col" style="gap:1.9vh">
+        <div class="stat-card" data-anim><div class="stat-label">Nigeria · Mobile Retail</div><div class="stat-nb" style="font-size:2.35vw">Spectrum Phones</div><div class="stat-note">Mobile / electronics retail and distribution，高 SKU、高频销售、多门店或扩张型经营。KiliMax 支持 ERP + POS，沉淀销售、库存、采购和门店活跃数据。</div></div>
+        <div class="stat-card" data-anim><div class="stat-label">Ghana · Multi-store</div><div class="stat-nb" style="font-size:2.35vw">MaxBuy</div><div class="stat-note">40+ stores，多门店零售、全国性门店运营。KiliMax 统一门店系统，提升库存准确性、员工控制和经营可见性。</div></div>
+        <div class="stat-card" data-anim><div class="stat-label">Ghana · Distribution</div><div class="stat-nb" style="font-size:2.35vw">Electronics Distributor</div><div class="stat-note">Consumer electronics distribution，库存和供应链敏感。信号包括采购频率、供应商链路、库存流动和补货需求。</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div>Operating signals, not static profiles</div><div>Proof</div></div>
+</section>
+
+<section class="slide hero light">
+  <div class="chrome"><div>Act I · Digitize Operations</div><div>05 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.8vh">
+    <div class="kicker" data-anim>先解决经营数字化，再衍生融资机会</div>
+    <h1 class="h-hero" style="font-size:7.4vw" data-anim>经营可见</h1>
+    <p class="lead" style="max-width:70vw" data-anim>只有经营过程被数字化，商户才有机会被金融机构识别、评估和持续服务。</p>
+    <div class="grid-2-6-6" style="margin-top:4.8vh;gap:3vw" data-anim>
+      <div>
+        <div class="kicker">商户在 KiliMax 里完成的经营动作</div>
+        <div class="map-grid" style="grid-template-columns:1fr">
+          <div class="map-item"><div class="k">交易动作</div><div class="v">开单销售、门店收款、客户交易、支付 / 收款记录。</div></div>
+          <div class="map-item"><div class="k">商品动作</div><div class="v">商品和 SKU 管理、库存查看、盘点、补货、采购。</div></div>
+          <div class="map-item"><div class="k">门店动作</div><div class="v">门店表现查看、员工操作记录、多门店经营管理。</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="kicker">系统持续沉淀为</div>
+        <div class="map-grid" style="grid-template-columns:1fr">
+          <div class="map-item"><div class="k">流水类数据</div><div class="v">销售记录、收款记录、客户交易记录、支付与回款节奏。</div></div>
+          <div class="map-item"><div class="k">周转类数据</div><div class="v">库存记录、采购记录、商品周转记录、补货需求信号。</div></div>
+          <div class="map-item"><div class="k">活跃类数据</div><div class="v">门店活跃、员工操作、经营连续性和日常业务痕迹。</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div>Sales · Inventory · Purchase · Store Activity</div><div>Act I</div></div>
+</section>
+
+<section class="slide dark" data-animate="directional">
+  <div class="chrome"><div>Merchant Pain · Working Capital Need</div><div>06 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame grid-2-6-6" style="padding-top:6vh">
+    <div data-anim="left">
+      <div class="kicker">很多 SME 不是没有生意</div>
+      <h2 class="h-xl" style="font-size:4.9vw">是资金跟不上机会</h2>
+      <p class="lead" style="margin-top:3vh">商品卖得动，但现金不够补货；批发商有订单，但短期资金不足；旺季前需要备货；库存周转快，但现金回笼慢。</p>
+      <div class="mini-list">
+        <span>小商户缺少正式财报，难以获得传统贷款。</span>
+        <span>传统贷款周期太长，不能匹配真实经营节奏。</span>
+        <span>非正规融资成本高、不透明，无法形成可持续信用记录。</span>
+      </div>
+    </div>
+    <div class="grid-3-3" style="align-content:start" data-anim="right">
+      <div class="pillar"><div class="t">小额</div><div class="d">匹配单次补货和短周期采购。</div></div>
+      <div class="pillar"><div class="t">快速</div><div class="d">跟得上销售节奏和旺季窗口。</div></div>
+      <div class="pillar"><div class="t">低摩擦</div><div class="d">少资料、少人工、嵌入现有系统。</div></div>
+      <div class="pillar"><div class="t">可重复</div><div class="d">良好表现后复贷或提额。</div></div>
+      <div class="pillar"><div class="t">按流水</div><div class="d">额度与还款节奏贴近经营。</div></div>
+      <div class="pillar"><div class="t">用于周转</div><div class="d">补货、采购、门店运营资金。</div></div>
+    </div>
+  </div>
+  <div class="foot"><div>SME 需要的不是复杂贷款流程，而是贴近经营场景的周转资金</div><div>Merchant Need</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome"><div>Bank Challenge · SME Service Cost</div><div>07 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.8vh">
+    <div class="kicker" data-anim>银行不是缺资金，而是缺可规模化服务 SME 的数据和触点</div>
+    <h2 class="h-xl" style="font-size:4.8vw" data-anim>识别、评估、监控、回收都太贵</h2>
+    <div class="quadrant" style="margin-top:5vh" data-anim>
+      <div class="quad"><div class="t">识别</div><div class="d">哪些商户真实活跃？日常销售规模多大？是否有持续经营痕迹？</div></div>
+      <div class="quad"><div class="t">评估</div><div class="d">销售是否稳定？库存是否健康？是否存在真实补货需求？适合贷多少？</div></div>
+      <div class="quad"><div class="t">监控</div><div class="d">放款后经营是否改善？是否出现异常退款、库存不匹配或长期不活跃？</div></div>
+      <div class="quad"><div class="t">回收</div><div class="d">还款通道和状态如何同步？哪些商户适合复贷、提额、降额或催收？</div></div>
+    </div>
+    <div class="callout" style="margin-top:3vh" data-anim>核心难点不是单笔资金，而是小额、高频、分散商户的服务成本。</div>
+  </div>
+  <div class="foot"><div>银行服务 SME 的难点，是识别、评估、监控和回收的成本太高</div><div>Challenge</div></div>
+</section>
+
+<section class="slide dark" data-animate="directional">
+  <div class="chrome"><div>Embedded Model · Partner Integration</div><div>08 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame grid-2-7-5" style="padding-top:7vh">
+    <div data-anim="left">
+      <div class="kicker">嵌入式合作能力</div>
+      <h2 class="h-xl" style="font-size:4.6vw">嵌入银行商户生态</h2>
+      <p class="lead" style="margin-top:3vh">商户从 Bank / Fintech 的生态入口进入 KiliMax，经 SSO 低摩擦访问，订阅并使用 ERP / POS，在真实经营过程中沉淀数据。</p>
+      <div class="mini-list">
+        <span>现有模式覆盖：Partner 平台进入、SSO 访问、订阅使用 KiliMax 服务。</span>
+        <span>后续可通过 API 或数据交换支持融资资格判断、贷后状态同步和复贷提额。</span>
+      </div>
+    </div>
+    <div data-anim="right">
+      <div class="rowline"><div class="k">入口</div><div class="v">Partner 平台入口、SSO 单点登录、Embedded / IFRAME access。</div><div class="m">Access</div></div>
+      <div class="rowline"><div class="k">使用</div><div class="v">Subscription-based access，KiliMax ERP / POS / Inventory / Sales。</div><div class="m">Usage</div></div>
+      <div class="rowline"><div class="k">沉淀</div><div class="v">商户经营数据、支付集成、后续 API 或数据交换。</div><div class="m">Data</div></div>
+      <div class="rowline"><div class="k">授权</div><div class="v">商户数据授权、明确共享范围、Partner-side underwriting。</div><div class="m">Consent</div></div>
+    </div>
+  </div>
+  <div class="foot"><div>KiliMax 可以成为金融机构商户生态中的 SME 经营软件层和数据入口</div><div>Embedded</div></div>
+</section>
+
+<section class="slide hero dark">
+  <div class="chrome"><div>Blueprint · From Entry To Financing</div><div>09 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.2vh">
+    <div class="kicker" data-anim>目标集成蓝图</div>
+    <h2 class="h-xl" style="font-size:4.1vw" data-anim>从银行商户入口，到融资场景</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1vw;margin-top:4.2vh" data-anim>
+      <div class="stat-card" style="background:rgba(var(--paper-rgb),.08);padding:2.2vh 1.2vw;border-top:2px solid currentColor;min-height:31vh">
+        <div class="stat-label">01 · Bank / Fintech</div>
+        <div class="stat-nb" style="font-size:2.15vw;font-family:var(--serif-zh)">商户入口</div>
+        <div class="stat-note">银行已有 SME 商户关系、账户、支付通道和服务入口。</div>
+        <div class="meta" style="margin-top:1.6vh">输出: 可触达商户池</div>
+      </div>
+      <div class="stat-card" style="background:rgba(var(--paper-rgb),.08);padding:2.2vh 1.2vw;border-top:2px solid currentColor;min-height:31vh">
+        <div class="stat-label">02 · Partner Entry</div>
+        <div class="stat-nb" style="font-size:2.15vw;font-family:var(--serif-zh)">低摩擦接入</div>
+        <div class="stat-note">Partner 入口、SSO、订阅访问，让商户从银行生态进入 KiliMax。</div>
+        <div class="meta" style="margin-top:1.6vh">输出: 可使用经营系统</div>
+      </div>
+      <div class="stat-card" style="background:rgba(var(--paper-rgb),.08);padding:2.2vh 1.2vw;border-top:2px solid currentColor;min-height:31vh">
+        <div class="stat-label">03 · KiliMax System</div>
+        <div class="stat-nb" style="font-size:2.15vw;font-family:var(--serif-zh)">经营数字化</div>
+        <div class="stat-note">ERP / POS / Inventory / Sales 覆盖销售、库存、采购和门店动作。</div>
+        <div class="meta" style="margin-top:1.6vh">输出: 系统生成数据</div>
+      </div>
+      <div class="stat-card" style="background:rgba(var(--paper-rgb),.08);padding:2.2vh 1.2vw;border-top:2px solid currentColor;min-height:31vh">
+        <div class="stat-label">04 · Data Layer</div>
+        <div class="stat-nb" style="font-size:2.15vw;font-family:var(--serif-zh)">经营信号</div>
+        <div class="stat-note">销售、库存、收款、采购和门店活跃在商户授权后转化为融资资格辅助信号。</div>
+        <div class="meta" style="margin-top:1.6vh">输出: Eligibility signals</div>
+      </div>
+      <div class="stat-card" style="background:rgba(var(--paper-rgb),.08);padding:2.2vh 1.2vw;border-top:2px solid currentColor;min-height:31vh">
+        <div class="stat-label">05 · Financing</div>
+        <div class="stat-nb" style="font-size:2.15vw;font-family:var(--serif-zh)">资金闭环</div>
+        <div class="stat-note">银行 / Fintech 完成授信、offer、放款、还款扣收和贷后监控。</div>
+        <div class="meta" style="margin-top:1.6vh">输出: Working capital</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1vw;margin-top:2.2vh;align-items:center" data-anim>
+      <div class="callout" style="padding:1.6vh 1vw;font-size:1vw">关系建立</div>
+      <div class="callout" style="padding:1.6vh 1vw;font-size:1vw">系统使用</div>
+      <div class="callout" style="padding:1.6vh 1vw;font-size:1vw">数据沉淀</div>
+      <div class="callout" style="padding:1.6vh 1vw;font-size:1vw">资格判断</div>
+      <div class="callout" style="padding:1.6vh 1vw;font-size:1vw">放款与监控</div>
+    </div>
+  </div>
+  <div class="foot"><div>嵌入式接入建立商户关系，经营数据创造融资机会</div><div>Blueprint</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome"><div>Data Layer · Operating Signals</div><div>10 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.6vh">
+    <div class="kicker" data-anim>KiliMax 作为 SME 融资数据层</div>
+    <h2 class="h-xl" style="font-size:4.7vw" data-anim>把日常经营活动转化为可融资数据</h2>
+    <div class="grid-2-7-5" style="margin-top:4.6vh;gap:3vw" data-anim>
+      <div class="map-grid">
+        <div class="map-item"><div class="k">销售数据</div><div class="v">收入规模、稳定性、品类动销、增长趋势。</div></div>
+        <div class="map-item"><div class="k">POS / 收款</div><div class="v">现金流、交易频率、支付与回款节奏。</div></div>
+        <div class="map-item"><div class="k">库存数据</div><div class="v">周转、缺货、滞销、库存健康度。</div></div>
+        <div class="map-item"><div class="k">采购数据</div><div class="v">进货频率、供应商稳定性、经营连续性。</div></div>
+        <div class="map-item"><div class="k">门店活跃</div><div class="v">真实经营、员工操作、多门店表现。</div></div>
+        <div class="map-item"><div class="k">未来表现</div><div class="v">融资使用、还款表现、复贷 / 提额记录。</div></div>
+      </div>
+      <div>
+        <div class="callout" style="padding:2.4vh 1.8vw"><span class="q-big">AI 的作用不是替代银行风控。</span><span class="callout-src">It turns operations into signals.</span></div>
+        <div class="mini-list" style="margin-top:2.4vh">
+          <span>商户经营画像：行业、门店、SKU、销售和客户结构。</span>
+          <span>增长信号：销售上升、门店扩张、采购频率提高。</span>
+          <span>补货需求：库存周转快、缺货风险、旺季备货。</span>
+          <span>异常经营：退款率高、库存不匹配、长期不活跃、异常支付模式。</span>
+          <span>分层运营：适合触达、适合融资、适合复贷或需要预警。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div>KiliMax 提供的不是单一数据点，而是商户持续经营画像</div><div>Data Layer</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome"><div>Trust · Data Reliability</div><div>11 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.2vh">
+    <div class="kicker" data-anim>数据可信度保障机制</div>
+    <h2 class="h-xl" style="font-size:4.35vw" data-anim>不是临时填表，而是经营过程留下的证据链</h2>
+    <div class="flow-bands" style="grid-template-columns:1.1fr .9fr" data-anim>
+      <div class="flow-band">
+        <div class="label">Reliability Chain</div>
+        <div class="flow-steps" style="grid-template-columns:repeat(3,1fr)">
+          <div class="flow-step"><div class="n">01</div><div class="t">系统生成</div><div class="d">Sales、POS transactions、Inventory movement、Purchasing、Payment records。</div></div>
+          <div class="flow-step"><div class="n">02</div><div class="t">对象可追溯</div><div class="d">Merchant、Store、Staff、SKU、Order、Invoice、Timestamp。</div></div>
+          <div class="flow-step"><div class="n">03</div><div class="t">交叉验证</div><div class="d">Sales vs payment，Sales vs inventory，Purchase vs inbound。</div></div>
+          <div class="flow-step"><div class="n">04</div><div class="t">操作可审计</div><div class="d">Created time、Updated time、Operator、Status changes、Raw history。</div></div>
+          <div class="flow-step"><div class="n">05</div><div class="t">异常可识别</div><div class="d">Sales spike、High refund rate、Stock mismatch、Inactive period。</div></div>
+          <div class="flow-step"><div class="n">06</div><div class="t">授权后共享</div><div class="d">Merchant consent、Defined scope、API sharing、Limited access。</div></div>
+        </div>
+      </div>
+      <div class="flow-band">
+        <div class="label">What This Means For Banks</div>
+        <div class="callout" style="padding:2.2vh 1.6vw">KiliMax 不声称每一条数据天然无风险，而是提供更可追溯、更可验证的经营数据基础。</div>
+        <div class="mini-list">
+          <span>减少临时填报资料的不确定性。</span>
+          <span>让贷前判断和贷后监控使用同一套经营信号。</span>
+          <span>让数据共享建立在商户授权和明确范围之上。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><div>更可信的数据基础，帮助金融机构更高效判断 SME 融资机会</div><div>Trust</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome"><div>Credit · Underwriting Signals</div><div>12 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.7vh">
+    <div class="kicker" data-anim>从“静态资料审核”变成“经营信号判断”</div>
+    <h2 class="h-xl" style="font-size:4.6vw" data-anim>经营数据如何支持授信判断</h2>
+    <div class="signal-table" style="margin-top:4.5vh" data-anim>
+      <div class="signal-row"><div class="k">销售数据</div><div class="v">收入规模、销售稳定性、增长趋势。</div><div class="m">额度上限</div></div>
+      <div class="signal-row"><div class="k">POS / 收款数据</div><div class="v">现金流、交易频率、回款节奏。</div><div class="m">还款能力</div></div>
+      <div class="signal-row"><div class="k">库存数据</div><div class="v">周转、缺货、滞销、补货窗口。</div><div class="m">真实需求</div></div>
+      <div class="signal-row"><div class="k">采购数据</div><div class="v">进货频率、供应商稳定性、经营连续性。</div><div class="m">经营稳定</div></div>
+      <div class="signal-row"><div class="k">门店活跃 / 支付数据</div><div class="v">是否真实经营、回款节奏、支付偏好、现金流质量。</div><div class="m">活跃度 / 质量</div></div>
+      <div class="signal-row"><div class="k">还款表现</div><div class="v">履约能力、复贷表现、额度调节依据。</div><div class="m">复贷 / 提额</div></div>
+    </div>
+    <div class="meta-row" style="margin-top:2.4vh" data-anim><span>真实经营?</span><span>持续活跃?</span><span>销售稳定?</span><span>库存健康?</span><span>补货需求?</span><span>贷后改善?</span></div>
+  </div>
+  <div class="foot"><div>KiliMax 不替代银行风控，但提供更真实、连续、动态的经营信号</div><div>Credit</div></div>
+</section>
+
+<section class="slide dark" data-animate="directional">
+  <div class="chrome"><div>Role · Responsibility Boundary</div><div>13 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame grid-2-6-6" style="padding-top:6vh">
+    <div data-anim="left">
+      <div class="kicker">KiliMax 提供经营可见性</div>
+      <h2 class="h-xl" style="font-size:4.6vw">场景和数据层</h2>
+      <div class="rowline"><div class="k">系统</div><div class="v">ERP / POS / 库存 / 销售 / 门店经营。</div><div class="m">Ops</div></div>
+      <div class="rowline"><div class="k">触点</div><div class="v">融资产品入口、Offer 展示、还款状态展示。</div><div class="m">Touchpoint</div></div>
+      <div class="rowline"><div class="k">同步</div><div class="v">商户经营数据、授权流程、贷后经营变化、还款状态展示。</div><div class="m">Data</div></div>
+    </div>
+    <div data-anim="right">
+      <div class="kicker">金融机构完成金融决策</div>
+      <h2 class="h-xl" style="font-size:4.6vw">资金和风险层</h2>
+      <div class="rowline"><div class="k">资金</div><div class="v">资金来源、额度审批、费用和定价。</div><div class="m">Capital</div></div>
+      <div class="rowline"><div class="k">风控</div><div class="v">授信政策、风控判断、合同签署。</div><div class="m">Risk</div></div>
+      <div class="rowline"><div class="k">执行</div><div class="v">放款、还款扣收、逾期处理、合规、催收、信用损失承担。</div><div class="m">Execution</div></div>
+    </div>
+  </div>
+  <div class="foot"><div>KiliMax 是经营场景和数据层，不是资金方</div><div>Boundary</div></div>
+</section>
+
+<section class="slide hero light">
+  <div class="chrome"><div>Product · Phase One</div><div>14 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:5vh">
+    <div class="kicker" data-anim>第一阶段产品</div>
+    <h1 class="h-hero h-hero-en" style="font-size:5.9vw;white-space:nowrap" data-anim>Merchant Working Capital</h1>
+    <p class="lead" style="max-width:72vw" data-anim>基于 KiliMax 经营数据的小微商户经营周转资金，优先服务补货、采购、旺季备货、短期现金流和高周转商品采购。</p>
+    <div class="grid-2-6-6" style="margin-top:4.2vh;gap:3vw" data-anim>
+      <div class="flow-band"><div class="label">Start With This</div><div class="map-grid" style="grid-template-columns:1fr"><div class="map-item"><div class="k">场景</div><div class="v">门店补货、批发商进货、POS 商户现金流周转、小商户经营扩张。</div></div><div class="map-item"><div class="k">产品原则</div><div class="v">小额、快速、简单、低摩擦、可重复，与经营流水匹配。</div></div></div></div>
+      <div class="flow-band"><div class="label">Not In Phase One</div><div class="map-grid" style="grid-template-columns:1fr"><div class="map-item"><div class="k">暂不主打</div><div class="v">重型供应链金融、库存质押、供应商直付、PO financing、传统保理。</div></div><div class="map-item"><div class="k">原因</div><div class="v">第一阶段应先验证使用、数据、转化和还款闭环，再进入重流程产品。</div></div></div></div>
+    </div>
+  </div>
+  <div class="foot"><div>第一阶段产品应快速、简单、贴近商户日常经营需求</div><div>Phase 1</div></div>
+</section>
+
+<section class="slide light">
+  <div class="chrome"><div>Product Flow · Merchant Working Capital</div><div>15 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.3vh">
+    <div class="kicker" data-anim>从经营数据到 financing offer，再到自动还款</div>
+    <h2 class="h-xl" style="font-size:4.35vw" data-anim>产品流程分成两段闭环</h2>
+    <div class="flow-bands" data-anim>
+      <div class="flow-band"><div class="label">Eligibility & Offer</div><div class="flow-steps"><div class="flow-step"><div class="n">01</div><div class="t">持续使用</div><div class="d">商户在 KiliMax 中完成日常经营。</div></div><div class="flow-step"><div class="n">02</div><div class="t">数据沉淀</div><div class="d">销售、库存、采购、收款、门店活跃。</div></div><div class="flow-step"><div class="n">03</div><div class="t">授权共享</div><div class="d">明确数据范围、用途和合作规则。</div></div><div class="flow-step"><div class="n">04</div><div class="t">资格判断</div><div class="d">银行判断 eligibility、额度和费用。</div></div></div></div>
+      <div class="flow-band"><div class="label">Disbursement & Repayment</div><div class="flow-steps"><div class="flow-step"><div class="n">05</div><div class="t">Offer 展示</div><div class="d">商户查看额度、费用、期限和还款方式。</div></div><div class="flow-step"><div class="n">06</div><div class="t">放款使用</div><div class="d">用于补货、采购或经营周转。</div></div><div class="flow-step"><div class="n">07</div><div class="t">还款同步</div><div class="d">销售流水、账户扣款或约定通道还款。</div></div><div class="flow-step"><div class="n">08</div><div class="t">复贷提额</div><div class="d">良好表现带来复贷或提额。</div></div></div></div>
+    </div>
+    <div class="callout" style="margin-top:3vh;padding:2vh 2vw" data-anim>融资不脱离经营场景：KiliMax 负责经营数据、授权和产品触点；银行 / Fintech 负责授信、放款、还款扣收、合规与信用风险。</div>
+  </div>
+  <div class="foot"><div>Merchant Working Capital Flow</div><div>Product</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome"><div>Control · Repayment Logic</div><div>16 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:5vh">
+    <div class="kicker" data-anim>Financing Control Logic</div>
+    <h2 class="h-xl" style="font-size:4.7vw" data-anim>看清还款来源、控制点和证据链</h2>
+    <div class="grid-3" style="margin-top:6vh">
+      <div class="stat-card" data-anim><div class="stat-label">Repayment Source</div><div class="stat-nb" style="font-size:3.6vw">还款来源</div><div class="stat-note">未来销售流水 / 商户账户扣款 / 约定支付通道。</div></div>
+      <div class="stat-card" data-anim><div class="stat-label">Control Point</div><div class="stat-nb" style="font-size:3.6vw">控制点</div><div class="stat-note">支付通道、账户扣款、还款状态同步、经营数据监控。</div></div>
+      <div class="stat-card" data-anim><div class="stat-label">Evidence Chain</div><div class="stat-nb" style="font-size:3.6vw">证据链</div><div class="stat-note">销售、库存、采购、门店活跃、历史还款表现。</div></div>
+    </div>
+    <p class="lead" style="margin-top:4vh;max-width:78vw" data-anim>KiliMax 的价值是提供证据链、状态机和可对账的经营闭环；金融机构负责资金与信用风险。</p>
+    <div class="mini-list three" data-anim>
+      <span>证据链：销售、库存、采购、门店活跃、历史还款表现。</span>
+      <span>控制点：支付通道、账户扣款、还款状态同步、经营数据监控。</span>
+      <span>还款来源：未来销售流水、商户账户扣款或约定支付通道。</span>
+    </div>
+  </div>
+  <div class="foot"><div>Evidence chain · State machine · Reconciliation loop</div><div>Control</div></div>
+</section>
+
+<section class="slide light" data-animate="directional">
+  <div class="chrome"><div>Roadmap · Phase 1 To Phase 2</div><div>17 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-dark.svg" alt="KiliMax logo">
+  <div class="frame grid-2-6-6" style="padding-top:6vh">
+    <div data-anim="left">
+      <div class="kicker">Phase 1</div>
+      <h2 class="h-xl" style="font-size:4.4vw">Merchant Working Capital</h2>
+      <div class="callout" style="margin-top:4vh">基于经营数据判断 eligibility，用于补货、采购、短期周转；放款给商户，通过销售流水、账户扣款或约定通道还款。</div>
+      <div class="mini-list two"><span>验证融资转化、还款闭环和数据价值。</span><span>适合先做轻量 working capital 试点。</span></div>
+    </div>
+    <div data-anim="right">
+      <div class="kicker">Phase 2</div>
+      <h2 class="h-xl" style="font-size:4.4vw">Supply Chain Extension</h2>
+      <div class="callout" style="margin-top:4vh">未来扩展 Supplier Payment Financing、Inventory Financing、PO Financing、Invoice / Receivables Financing 与 Controlled-Use Working Capital。</div>
+      <div class="mini-list two"><span>需要补齐：PO、Supplier、Goods Receipt、Inventory。</span><span>还需闭环：Invoice / Payable、Payment、Reconciliation。</span></div>
+    </div>
+  </div>
+  <div class="foot"><div>第一阶段验证轻量 working capital；第二阶段进入更强控制、更重流程的供应链金融</div><div>Roadmap</div></div>
+</section>
+
+<section class="slide dark">
+  <div class="chrome"><div>Commercial Model · Open Cooperation</div><div>18 / 19</div></div>
+  <img class="brand-bug" src="images/kilimax-logo-light.svg" alt="KiliMax logo">
+  <div class="frame" style="padding-top:4.6vh">
+    <div class="kicker" data-anim>当前目标是探索合作可能性，而不是锁定唯一商业模式</div>
+    <h2 class="h-xl" style="font-size:4.4vw" data-anim>开放合作模式与责任边界</h2>
+    <div class="grid-3" style="margin-top:4.8vh;gap:3vw" data-anim>
+      <div class="stat-card"><div class="stat-label">Software Access</div><div class="stat-nb" style="font-size:2.4vw;font-family:var(--serif-zh)">软件服务</div><div class="stat-note">银行将 KiliMax 打包为 SME 商户服务；商户自行订阅；银行 / Fintech 补贴软件订阅。</div></div>
+      <div class="stat-card"><div class="stat-label">Financing Conversion</div><div class="stat-nb" style="font-size:2.4vw;font-family:var(--serif-zh)">融资转化</div><div class="stat-note">银行基于 KiliMax 数据提供 financing offer；探索数据服务、技术服务、referral fee 或 revenue share。</div></div>
+      <div class="stat-card"><div class="stat-label">Brand / Pilot</div><div class="stat-nb" style="font-size:2.4vw;font-family:var(--serif-zh)">品牌试点</div><div class="stat-note">联合品牌、白标 / Partner-branded 模式，或针对特定行业做试点包。</div></div>
+    </div>
+    <div class="grid-2-6-6" style="margin-top:4vh;gap:3vw" data-anim>
+      <div class="callout" style="padding:2vh 1.8vw"><span class="q-big">KiliMax 负责</span><span class="callout-src">入口 · 系统 · 数据 · 授权 · 展示 · 状态同步</span></div>
+      <div class="callout" style="padding:2vh 1.8vw"><span class="q-big">Fintech / 银行负责</span><span class="callout-src">资金 · 信用决策 · 定价 · 合同 · 放款 · 回收 · 合规 · 损失</span></div>
+    </div>
+  </div>
+  <div class="foot"><div>第一目标不是锁定商业模式，而是验证商户使用、数据价值和融资转化</div><div>Model</div></div>
+</section>
+
+<section class="slide hero dark" data-animate="quote">
+  <div class="chrome"><div>Closing · Scalable SME Financing</div><div>19 / 19</div></div>
+  <img class="brand-mark-ghost" src="images/kilimax-mark.svg" alt="">
+  <div class="frame" style="display:grid;gap:3.8vh;align-content:center;min-height:80vh">
+    <div class="kicker" data-anim>方案总结</div>
+    <h1 class="h-hero" style="font-size:6.8vw" data-anim>数据变资金</h1>
+    <p class="lead" style="max-width:74vw" data-anim="line">KiliMax digitizes African SME operations.</p>
+    <p class="lead" style="max-width:74vw" data-anim="line">Fintech turns operating data into working capital.</p>
+    <p class="lead" style="max-width:74vw" data-anim="line">Together, we build a scalable SME financing model for African markets.</p>
+    <div class="callout" style="max-width:80vw" data-anim>KiliMax 把 SME 的日常经营沉淀为连续、可验证的数据；银行 / Fintech 在商户授权后使用这些信号，提供更贴近经营节奏的 working capital。</div>
+    <div class="meta-row" style="max-width:86vw" data-anim><span>KiliMax 经营系统使用</span><span>→</span><span>经营数据沉淀</span><span>→</span><span>商户授权</span><span>→</span><span>Eligibility</span><span>→</span><span>Working Capital</span><span>→</span><span>还款 / 复贷 / 提额</span></div>
+  </div>
+  <div class="foot"><div>KiliMax + Fintech / Bank · Africa SME Financing</div><div>End</div></div>
+</section>
+
+
+</div>
+
+<div id="nav"></div>
+
+<script>
+/* =============== WebGL 双背景 ===============
+   深色页：Holographic Dispersion（全息色散 · 钛金暗流）—— 彩虹微扰、鼠标径向涟漪
+   浅色页：Spiral Vortex（旋转涡流 · 银色珍珠）—— domain-warp 流动、无中心
+   修改风格请参考 references/webgl-backgrounds.md
+*/
+const VS = `attribute vec2 position;void main(){gl_Position=vec4(position,0.0,1.0);}`;
+
+const FS_DARK = `precision highp float;
+uniform vec2 u_resolution;uniform float u_time;uniform vec2 u_mouse;
+vec3 palette(float t,vec3 a,vec3 b,vec3 c,vec3 d){return a+b*cos(6.28318*(c*t+d));}
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_resolution.xy;
+  vec2 p=uv*2.0-1.0;p.x*=u_resolution.x/u_resolution.y;
+  vec2 m=u_mouse*2.0-1.0;m.x*=u_resolution.x/u_resolution.y;
+  float md=length(p-m);
+  float mr=sin(md*15.0-u_time*4.0)*exp(-md*3.0);p+=mr*0.08;
+  vec2 p0=p;
+  for(float i=1.0;i<4.0;i++){
+    p.x+=0.1/i*sin(i*3.0*p.y+u_time*0.4)+0.05;
+    p.y+=0.1/i*cos(i*2.0*p.x+u_time*0.3)-0.05;
+  }
+  float r=length(p);float ang=atan(p.y,p.x);
+  vec3 a=vec3(0.12,0.12,0.13);
+  vec3 b=vec3(0.03,0.04,0.05);
+  vec3 c=vec3(1.0,1.0,1.0);
+  vec3 d=vec3(0.1,0.2,0.4);
+  vec3 col=palette(r*1.5+p0.x*0.5+u_time*0.1,a,b,c,d);
+  float disp=sin(r*25.0-u_time*1.5+ang*2.0)*0.5+0.5;
+  col+=vec3(disp*0.015,disp*0.01,disp*0.02);
+  float hi=pow(sin(p.x*4.0+p.y*3.0+u_time)*0.5+0.5,8.0);
+  col+=hi*0.08;
+  vec3 base=vec3(0.05,0.05,0.06);
+  col=mix(base,col,0.85);
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+const FS_LIGHT = `precision highp float;
+uniform vec2 u_resolution;uniform float u_time;uniform vec2 u_mouse;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  float a=hash(i),b=hash(i+vec2(1,0));
+  float c=hash(i+vec2(0,1)),d=hash(i+vec2(1,1));
+  vec2 u=f*f*(3.0-2.0*f);
+  return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
+}
+float fbm(vec2 p){
+  float v=0.0,a=0.5;
+  mat2 m=mat2(0.80,0.60,-0.60,0.80);
+  for(int i=0;i<5;i++){v+=a*noise(p);p=m*p*2.02;a*=0.5;}
+  return v;
+}
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_resolution.xy;
+  vec2 p=uv;p.x*=u_resolution.x/u_resolution.y;
+  vec2 m=u_mouse;m.x*=u_resolution.x/u_resolution.y;
+  vec2 md=p-m;float dl=length(md);
+  p+=normalize(md+vec2(0.0001))*exp(-dl*5.0)*0.03;
+  vec2 q=vec2(fbm(p*1.8+u_time*0.07),fbm(p*1.8+vec2(5.2,1.3)+u_time*0.06));
+  vec2 r=vec2(fbm(p*2.0+q*1.3+vec2(1.7,9.2)+u_time*0.05),
+              fbm(p*2.0+q*1.3+vec2(8.3,2.8)+u_time*0.04));
+  float f=fbm(p*2.2+r*1.5);
+  vec3 silverDark=vec3(0.86,0.85,0.84);
+  vec3 paper=vec3(0.955,0.945,0.925);
+  vec3 col=mix(silverDark,paper,f);
+  float ph=r.x*2.2+u_time*0.35;
+  col+=vec3(0.78,0.62,0.92)*sin(ph)*0.055;
+  col+=vec3(0.55,0.72,0.95)*sin(ph*0.8+2.0)*0.05;
+  float hl=smoothstep(0.48,0.92,f);
+  col+=hl*0.06;
+  gl_FragColor=vec4(col,1.0);
+}`;
+
+const mouse={x:0.5,y:0.5};
+addEventListener('mousemove',e=>{mouse.x=e.clientX/innerWidth;mouse.y=e.clientY/innerHeight});
+
+function bootGL(canvasId, fsSrc){
+  const canvas=document.getElementById(canvasId);
+  const gl=canvas.getContext('webgl',{alpha:false,antialias:true});
+  if(!gl) return ()=>false;
+  const mk=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh};
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mk(gl.VERTEX_SHADER,VS));
+  gl.attachShader(prog,mk(gl.FRAGMENT_SHADER,fsSrc));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+  const pos=gl.getAttribLocation(prog,'position');
+  gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
+  const lRes=gl.getUniformLocation(prog,'u_resolution');
+  const lT=gl.getUniformLocation(prog,'u_time');
+  const lM=gl.getUniformLocation(prog,'u_mouse');
+  const resize=()=>{
+    const d=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=innerWidth*d;canvas.height=innerHeight*d;
+    gl.viewport(0,0,canvas.width,canvas.height);
+  };
+  addEventListener('resize',resize);resize();
+  return (tSec)=>{
+    gl.uniform2f(lRes,canvas.width,canvas.height);
+    gl.uniform1f(lT,tSec);
+    gl.uniform2f(lM,mouse.x,1-mouse.y);
+    gl.drawArrays(gl.TRIANGLES,0,6);
+    return true;
+  };
+}
+const drawDark=bootGL('bg-dark',FS_DARK);
+const drawLight=bootGL('bg-light',FS_LIGHT);
+const t0=Date.now();
+(function loop(){
+  const t=(Date.now()-t0)/1000;
+  drawDark(t);drawLight(t);
+  requestAnimationFrame(loop);
+})();
+
+// =============== 导航（翻页 / 圆点 / 键盘 / 滚轮 / 触屏） ===============
+const deck=document.getElementById('deck');
+const slides=deck.querySelectorAll('.slide');
+const nav=document.getElementById('nav');
+let idx=0,total=slides.length,lock=false;
+
+// 关键：矫正 deck 宽度为 total * 100vw，否则翻页会错位
+deck.style.width=(total*100)+'vw';
+
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='dot';b.dataset.i=i;b.setAttribute('aria-label','Page '+(i+1));
+  b.onclick=()=>go(i);
+  nav.appendChild(b);
+});
+
+function go(n){
+  if(lock)return;
+  idx=Math.max(0,Math.min(total-1,n));
+  deck.style.transform=`translateX(${-idx*100}vw)`;
+  nav.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  /* 主题切换：优先读 data-theme，其次从 class（light/dark）推断 */
+  const el=slides[idx];
+  const th=el.dataset.theme || (el.classList.contains('light')?'light':(el.classList.contains('dark')?'dark':'dark'));
+  document.body.classList.toggle('light-bg',th==='light');
+  /* 动效：翻页过渡中段触发当前页的入场动画（由 motion-boot 注册） */
+  if(window.__playSlide) setTimeout(()=>window.__playSlide(idx), 450);
+  lock=true;setTimeout(()=>lock=false,700);
+}
+
+/* =============== ESC 索引视图 =============== */
+let overviewOn=false;
+const ov=document.createElement('div');
+ov.id='overview';
+ov.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(var(--ink-rgb),.92);backdrop-filter:blur(12px);display:none;overflow-y:auto;padding:4vh 4vw';
+document.body.appendChild(ov);
+
+function buildOverview(){
+  ov.innerHTML='';
+  const grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:2vh 1.6vw;max-width:90vw;margin:0 auto';
+  slides.forEach((s,i)=>{
+    const card=document.createElement('div');
+    card.style.cssText='cursor:pointer;border-radius:6px;overflow:hidden;border:2px solid '+(i===idx?'rgba(var(--paper-rgb),.8)':'rgba(var(--paper-rgb),.15)')+';transition:border-color .2s';
+    card.onmouseenter=()=>card.style.borderColor='rgba(var(--paper-rgb),.6)';
+    card.onmouseleave=()=>card.style.borderColor=i===idx?'rgba(var(--paper-rgb),.8)':'rgba(var(--paper-rgb),.15)';
+    const wrap=document.createElement('div');
+    wrap.style.cssText='width:100%;aspect-ratio:16/9;overflow:hidden;position:relative;pointer-events:none;background:'+(s.classList.contains('light')?'var(--paper)':'var(--ink)');
+    const clone=s.cloneNode(true);
+    clone.style.cssText='width:100vw;height:100vh;transform:scale('+(1/4.5)+');transform-origin:top left;position:absolute;top:0;left:0;pointer-events:none';
+    wrap.appendChild(clone);
+    const label=document.createElement('div');
+    label.style.cssText='padding:6px 10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper);opacity:.7';
+    label.textContent=(i+1)+' / '+total;
+    card.appendChild(wrap);
+    card.appendChild(label);
+    card.onclick=()=>{toggleOverview();go(i)};
+    grid.appendChild(card);
+  });
+  ov.appendChild(grid);
+}
+
+function toggleOverview(){
+  overviewOn=!overviewOn;
+  if(overviewOn){buildOverview();ov.style.display='block';}
+  else{ov.style.display='none';}
+}
+
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){e.preventDefault();toggleOverview();return;}
+  if(overviewOn)return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '||e.key==='ArrowDown'){
+    if(window.__pipeAdvance && window.__pipeAdvance()) return;
+    go(idx+1);
+    return;
+  }
+  if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='ArrowUp')go(idx-1);
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(total-1);
+});
+
+let wheelTO=null,wheelAcc=0;
+addEventListener('wheel',e=>{
+  wheelAcc+=e.deltaY+e.deltaX;
+  if(Math.abs(wheelAcc)>50){
+    if(wheelAcc>0 && window.__pipeAdvance && window.__pipeAdvance()){
+      wheelAcc=0;
+    }else{
+      go(idx+(wheelAcc>0?1:-1));wheelAcc=0;
+    }
+  }
+  clearTimeout(wheelTO);wheelTO=setTimeout(()=>wheelAcc=0,150);
+},{passive:true});
+
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=(e.changedTouches[0].clientX-tx);
+  const dy=(e.changedTouches[0].clientY-ty);
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){
+    if(dx<0 && window.__pipeAdvance && window.__pipeAdvance()) return;
+    go(idx+(dx<0?1:-1));
+  }
+},{passive:true});
+
+go(0);
+</script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
+
+<!-- ============ Motion One 动效引擎（本地优先,CDN 兜底） ============
+     加载策略:先 ./assets/motion.min.js(本地,离线可用),失败 fallback 到 jsDelivr CDN
+     加载完成后挂 window.__playSlide / window.__pipeAdvance,
+     导航脚本会在翻页中段调用 __playSlide(idx),键盘/滚轮/触屏会在翻页前调用 __pipeAdvance()
+     双双失败时会兜底把所有 [data-anim] 设为可见,不让动效破坏阅读
+-->
+<script type="module">
+let motion;
+try {
+  motion = await import('./assets/motion.min.js');
+} catch(e1) {
+  try {
+    motion = await import('https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm');
+  } catch(e2) {
+    console.warn('[motion] local + CDN both failed, disabling animations', e1, e2);
+    document.querySelectorAll('[data-anim]').forEach(el=>{el.style.opacity='1';el.style.transform='none'});
+    document.querySelectorAll('[data-animate="pipeline"] [data-anim]').forEach(el=>el.style.opacity='1');
+  }
+}
+
+if(motion){
+  const { animate, stagger } = motion;
+  document.body.classList.add('motion-ready');
+  const EASE = [.22, 1, .36, 1];
+  const slides = [...document.querySelectorAll('.slide')];
+  let pipeStep = -1;
+  let lastIdx = -1;
+
+  function resetAnims(slide){
+    slide.querySelectorAll('[data-anim]').forEach(el=>{
+      el.style.opacity='';
+      el.style.transform='';
+    });
+  }
+
+  function playSlide(i){
+    const slide = slides[i];
+    if(!slide) return;
+    lastIdx = i;
+    const recipe = slide.dataset.animate || (slide.classList.contains('hero') ? 'hero' : 'cascade');
+
+    if(recipe === 'pipeline'){
+      pipeStep = -1;
+      slide.querySelectorAll('[data-anim]').forEach(el=>{
+        el.style.opacity='0.15';
+        el.style.transform='none';
+      });
+      return;
+    }
+
+    resetAnims(slide);
+    const all = [...slide.querySelectorAll('[data-anim]')];
+    if(!all.length) return;
+
+    if(recipe === 'directional'){
+      const lefts  = all.filter(el=>el.dataset.anim==='left');
+      const divs   = all.filter(el=>el.dataset.anim==='divider');
+      const rights = all.filter(el=>el.dataset.anim==='right');
+      const others = all.filter(el=>!['left','right','divider'].includes(el.dataset.anim));
+      if(others.length) animate(others, {opacity:[0,1], y:[12,0]}, {duration:.6, delay:stagger(.1, {start:.15}), easing:EASE});
+      if(lefts.length)  animate(lefts,  {opacity:[0,1], x:[-24,0]}, {duration:.8, delay:.35, easing:EASE});
+      if(divs.length)   animate(divs,   {opacity:[0,.25]},          {duration:.5, delay:.9});
+      if(rights.length) animate(rights, {opacity:[0,1], x:[24,0]},  {duration:.8, delay:1.0, easing:EASE});
+      return;
+    }
+
+    if(recipe === 'quote'){
+      const lines = all.filter(el=>el.dataset.anim==='line');
+      const others = all.filter(el=>el.dataset.anim!=='line');
+      if(others.length) animate(others, {opacity:[0,1], y:[8,0]},    {duration:.6, delay:stagger(.12, {start:.2}), easing:EASE});
+      if(lines.length)  animate(lines,  {opacity:[.35,1], y:[10,0]}, {duration:.8, delay:stagger(.55, {start:.5}), easing:EASE});
+      return;
+    }
+
+    if(recipe === 'hero'){
+      animate(all, {opacity:[0,1], y:[14,0]}, {duration:.9, delay:stagger(.16, {start:.2}), easing:EASE});
+      return;
+    }
+
+    // default: cascade
+    animate(all, {opacity:[0,1], y:[16,0]}, {duration:.75, delay:stagger(.1, {start:.15}), easing:EASE});
+  }
+
+  function pipeAdvance(){
+    const slide = slides[lastIdx];
+    if(!slide || slide.dataset.animate !== 'pipeline') return false;
+    const steps  = [...slide.querySelectorAll('[data-anim="step"]')];
+    const arrows = [...slide.querySelectorAll('[data-anim="arrow"]')];
+    if(pipeStep >= steps.length - 1) return false;
+    pipeStep++;
+    animate(steps[pipeStep], {opacity:[0.15,1], y:[8,0]}, {duration:.5, easing:EASE});
+    if(pipeStep > 0 && arrows[pipeStep-1]){
+      animate(arrows[pipeStep-1], {opacity:[0.15,.7]}, {duration:.3, delay:.15});
+    }
+    return true;
+  }
+
+  window.__playSlide = playSlide;
+  window.__pipeAdvance = pipeAdvance;
+
+  // 首屏:go(0) 已跑过(同步),没来得及触发动效 → 这里补一下
+  playSlide(0);
+}
+</script>
+</body>
+</html>

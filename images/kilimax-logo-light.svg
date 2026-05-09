@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 230" role="img" aria-label="KiliMax logo">
+  <rect width="820" height="230" fill="none"/>
+  <g transform="translate(42 35)">
+    <path d="M18 150 L58 0 L155 0 L117 150 Z" fill="#cfe7d1"/>
+    <path d="M91 150 C114 70 178 18 268 1 C177 43 132 92 114 150 Z" fill="#ffffff"/>
+    <path d="M122 150 L168 71 L206 150 Z" fill="#ffffff"/>
+  </g>
+  <text x="294" y="170" fill="#ffffff" font-family="Arial Black, Arial, sans-serif" font-size="134" font-style="italic" font-weight="900">iliMax</text>
+</svg>
